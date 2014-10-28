@@ -29,7 +29,7 @@ int main(void)
     socklen_t slen=sizeof(cli_addr);
     char buf[BUFLEN];
 	//adding struct
-	struct request_say *message;
+	struct request_say message;
  
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP))==-1)
       err("socket");
@@ -49,11 +49,11 @@ int main(void)
     while(1)
     {
         //if (recvfrom(sockfd, buf, BUFLEN, 0, (struct
-	if (recvfrom(sockfd, message, sizeof(message), 0, (struct
+	if (recvfrom(sockfd, &message, sizeof(message), 0, (struct
  sockaddr*)&cli_addr, &slen)==-1)
             err("recvfrom()");
         printf("Received packet from %s:%d\nData: %s\n\n",
-               inet_ntoa(cli_addr.sin_addr), ntohs(cli_addr.sin_port), message->req_text);
+               inet_ntoa(cli_addr.sin_addr), ntohs(cli_addr.sin_port), message.req_text);
     }
  
     close(sockfd);

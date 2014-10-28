@@ -29,7 +29,7 @@ int main(int argc, char** argv)
     int sockfd, i, slen=sizeof(serv_addr);
     char buf[BUFLEN];
 	//adding struct
-	struct request_say *message;
+	struct request_say message;
  
     if(argc != 2)
     {
@@ -57,12 +57,15 @@ int main(int argc, char** argv)
         if(strcmp(buf,"exit") == 0)
           exit(0);
 	//adding struct
-	message->req_type = REQ_SAY;
-	strcpy(message->req_channel, "default\n");
-	strcpy(message->req_text, buf);
+	printf("before set\n");
+	message.req_type = REQ_SAY;
+	printf("before strcpy\n");
+	strcpy(message.req_channel, "default\n");
+	strcpy(message.req_text, buf);
  
         //if (sendto(sockfd, buf, BUFLEN, 0, (struct
-	if (sendto(sockfd, message, sizeof(*message), 0, (struct
+	printf("attempting to send message\n");
+	if (sendto(sockfd, &message, sizeof(message), 0, (struct
  sockaddr*)&serv_addr, slen)==-1)
             err("sendto()");
     }

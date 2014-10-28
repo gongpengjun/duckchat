@@ -65,11 +65,13 @@ struct request_leave {
         char req_channel[CHANNEL_MAX]; 
 } packed;
 
+#pragma pack(1)
 struct request_say {
         request_t req_type; /* = REQ_SAY */
         char req_channel[CHANNEL_MAX]; 
         char req_text[SAY_MAX];
-} packed;
+};
+#pragma pack(0)
 
 struct request_list {
         request_t req_type; /* = REQ_LIST */
