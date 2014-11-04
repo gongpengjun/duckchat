@@ -81,26 +81,26 @@ int readRequestType(struct request *r, int b)
     printf("made it to method \n");
     switch(ntohl(r->req_type)) {
         case REQ_LOGIN:
-            printf("switchhh case worrked II\n");
+            printf("switchhh case login\n");
             break;
         case REQ_LOGOUT:
-            printf("switchhh case worrked III\n");
+            printf("switchhh case logout\n");
             break;  
         case REQ_JOIN:
-            printf("switchhh case worrkedIIII\n");
+            printf("switchhh case join\n");
             break;    
         case REQ_LEAVE:
-            printf("switchhh case worrked IIIII\n");
+            printf("switchhh case leave\n");
             break;
         case REQ_SAY:
-            printf("switchhh case worrked\n");
+            printf("switchhh case say\n");
             sayReq( (struct request_say*) r );
             break;
         case REQ_LIST:
-            printf("switchhh case worrked IIIIII\n");
+            printf("switchhh case list \n");
             break;
         case REQ_WHO:
-            printf("switchhh case worrked IIIIIII\n");
+            printf("switchhh case who\n");
             break;
     }
     return fin;
