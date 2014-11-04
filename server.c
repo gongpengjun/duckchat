@@ -39,7 +39,7 @@ int sockfd;
 
 int connectToSocket(char*, char*);
 void err(char*);
-void readRequestType(struct request*, int);
+int readRequestType(struct request*, int);
 void sayReq(struct request_say*);
 struct addrinfo *addrAr;
  
@@ -76,8 +76,9 @@ void sayReq(struct request_say *rs)
     //here we can handle req_say
 }
 
-void readRequestType(struct request *r, int b) 
+int readRequestType(struct request *r, int b) 
 {
+    int fin = 0;
     printf("made it to method \n");
     switch(ntohl(r->req_type)) {
         case REQ_SAY:
@@ -85,24 +86,25 @@ void readRequestType(struct request *r, int b)
             sayReq( (struct request_say*) r );
             break;
         case REQ_LOGIN:
-        
+            printf("switchhh case worrked II\n");
             break;
         case REQ_LOGOUT:
-          
+            printf("switchhh case worrked III\n");
             break;  
         case REQ_JOIN:
-        
+            printf("switchhh case worrkedIIII\n");
             break;    
         case REQ_LEAVE:
-            
+            printf("switchhh case worrked IIIII\n");
             break;
         case REQ_LIST:
-            
+            printf("switchhh case worrked IIIIII\n");
             break;
         case REQ_WHO:
-            
+            printf("switchhh case worrked IIIIIII\n");
             break;
     }
+    return fin;
 }
 
 int connectToSocket(char* ip, char* port)
