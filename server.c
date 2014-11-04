@@ -92,5 +92,6 @@ int connectToSocket(char* ip, char* port)
         err("Server : bind() NOT successful\n");
         return false;
     }
+    printf("socket and bind successful! \n");
     return true;
 }
