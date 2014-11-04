@@ -18,7 +18,19 @@
 #include "duckchat.h"
 #define BUFLEN 1024
 
-
+const char* const REQ_AR[8] = {"REQ_LOGIN",
+                                "REQ_LOGOUT",
+                                "REQ_JOIN",
+                                "REQ_LEAVE",
+                                "REQ_SAY",
+                                "REQ_LIST",
+                                "REQ_WHO"
+                                };
+const char* const MSG_AR[4] = {"TXT_SAY",
+                                "TXT_LIST",
+                                "TXT_WHO",
+                                "TXT_ERROR"
+                                }; 
 
 socklen_t fromlen;
 struct sockaddr recAddr;
@@ -68,10 +80,6 @@ int readRequestType(struct request *r, int b)
     int fin = 0;
     printf("made it to method \n");
     switch(ntohl(r->req_type)) {
-        case REQ_SAY:
-            printf("switchhh case worrked\n");
-            sayReq( (struct request_say*) r );
-            break;
         case REQ_LOGIN:
             printf("switchhh case worrked II\n");
             break;
@@ -83,6 +91,10 @@ int readRequestType(struct request *r, int b)
             break;    
         case REQ_LEAVE:
             printf("switchhh case worrked IIIII\n");
+            break;
+        case REQ_SAY:
+            printf("switchhh case worrked\n");
+            sayReq( (struct request_say*) r );
             break;
         case REQ_LIST:
             printf("switchhh case worrked IIIIII\n");
