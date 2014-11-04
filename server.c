@@ -18,20 +18,7 @@
 #include "duckchat.h"
 #define BUFLEN 1024
 
-const char* const REQ_STR[8] = {"REQ_LOGIN",
-                                "REQ_LOGOUT",
-                                "REQ_JOIN",
-                                "REQ_LEAVE",
-                                "REQ_SAY",
-                                "REQ_LIST",
-                                "REQ_WHO",
-                                "REQ_KEEP_ALIVE"
-                                };
-const char* const TXT_STR[4] = {"TXT_SAY",
-                                "TXT_LIST",
-                                "TXT_WHO",
-                                "TXT_ERROR"
-                                }; 
+
 
 socklen_t fromlen;
 struct sockaddr recAddr;
