@@ -19,7 +19,7 @@
 #define BUFLEN 512
 #define PORT 9930
 
-int setupSocket(char*, char*);
+int connectToSocket(char*, char*);
 
 struct addrinfo *addrAr;
  
@@ -63,7 +63,7 @@ int main(int argc, char **argv)
  //            err("recvfrom()");
  //        printf("Received packet from %s:%d\nData: %s\n\n",
  //               inet_ntoa(cli_addr.sin_addr), ntohs(cli_addr.sin_port), message.req_text);
- //    }
+     }
  
     //close(sockfd);
     return 0;
@@ -74,7 +74,7 @@ int connectToSocket(char* ip, char* port)
     struct addrinfo addressTmp;
     memset(&addressTmp, 0, sizeof addressTmp);
     addressTmp.ai_family = AF_INET;
-    addressTmp.ai_socketype = SOCK_DGRAM;
+    addressTmp.ai_socktype = SOCK_DGRAM;
     addressTmp.ai_flags = AI_PASSIVE;
     int check, secCheck = 0;
     if((check = getaddrinfo(ip, port, &addressTmp, &addrAr))!= 0)
