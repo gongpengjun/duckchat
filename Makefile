@@ -1,9 +1,10 @@
 CC = gcc
+PP = g++
 
 all: server client
 
-server: server.c
-	$(CC) -o server server.c
+server: server.cpp
+	$(PP) -o server server.cpp
 
 client: client.c
 	$(CC) -o client client.c

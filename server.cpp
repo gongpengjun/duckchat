@@ -35,6 +35,7 @@ const char* const MSG_AR[4] = {"TXT_SAY",
                                 "TXT_WHO",
                                 "TXT_ERROR"
                                 }; 
+using namespace std;
 //globals
 socklen_t fromlen;
 struct sockaddr recAddr;
@@ -119,7 +120,7 @@ int readRequestType(struct request *r, int b)
         case REQ_LOGIN:
             if(sizeof(struct request_login) == b) {
                 printf("switchhh case login valid\n");
-                fin = loginReq((struct request_login) r);
+                fin = loginReq((struct request_login*) r);
                 break;
             } else {
                 printf("switchhh case login INvalid\n");
@@ -128,7 +129,7 @@ int readRequestType(struct request *r, int b)
         case REQ_LOGOUT:
             if(sizeof(struct request_logout) == b) {
                 printf("switchhh case logout valid\n");
-                fin = logoutReq((struct request_logout) r);
+                fin = logoutReq((struct request_logout*) r);
                 break;
             } else {
                 printf("switchhh case logout INvalid\n");
@@ -137,7 +138,7 @@ int readRequestType(struct request *r, int b)
         case REQ_JOIN:
             if(sizeof(struct request_join) == b) {
                 printf("switchhh case join valid\n");
-                fin = joinReq((struct request_join) r);
+                fin = joinReq((struct request_join*) r);
                 break;
             } else {
                 printf("switchhh case join INvalid\n");
@@ -146,7 +147,7 @@ int readRequestType(struct request *r, int b)
         case REQ_LEAVE:
             if(sizeof(struct request_leave) == b) {
                 printf("switchhh case leave valid\n");
-                fin = leaveReq((struct request_leave) r);
+                fin = leaveReq((struct request_leave*) r);
                 break;
             } else {
                 printf("switchhh case leave INvalid\n");
@@ -155,7 +156,7 @@ int readRequestType(struct request *r, int b)
         case REQ_SAY:
             if(sizeof(struct request_say) == b) {
                 printf("switchhh case say valid\n");
-                fin = sayReq((struct request_say) r);
+                fin = sayReq((struct request_say*) r);
                 break;
             } else {
                 printf("switchhh case say INvalid\n");
@@ -164,7 +165,7 @@ int readRequestType(struct request *r, int b)
         case REQ_LIST:
             if(sizeof(struct request_list) == b) {
                 printf("switchhh case list valid\n");
-                fin = listReq((struct request_list) r);
+                fin = listReq((struct request_list*) r);
                 break;
             } else {
                 printf("switchhh case list INvalid\n");
@@ -173,7 +174,7 @@ int readRequestType(struct request *r, int b)
         case REQ_WHO:
             if(sizeof(struct request_who) == b) {
                 printf("switchhh case who valid\n");
-                fin = whoReq((struct request_who) r);
+                fin = whoReq((struct request_who*) r);
                 break;
             } else {
                 printf("switchhh case who INvalid\n");
