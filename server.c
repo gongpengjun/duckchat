@@ -7,13 +7,14 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <stdio.h>
- #include <sys/types.h>
+#include <sys/types.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <netdb.h>
 #include "duckchat.h"
 #define BUFLEN 512
 #define PORT 9930
@@ -57,14 +58,14 @@ int main(int argc, char **argv)
     while(1)
     {
         //if (recvfrom(sockfd, buf, BUFLEN, 0, (struct
-	if (recvfrom(sockfd, &message, sizeof(message), 0, (struct
- sockaddr*)&cli_addr, &slen)==-1)
-            err("recvfrom()");
-        printf("Received packet from %s:%d\nData: %s\n\n",
-               inet_ntoa(cli_addr.sin_addr), ntohs(cli_addr.sin_port), message.req_text);
-    }
+	// if (recvfrom(sockfd, &message, sizeof(message), 0, (struct
+ // sockaddr*)&cli_addr, &slen)==-1)
+ //            err("recvfrom()");
+ //        printf("Received packet from %s:%d\nData: %s\n\n",
+ //               inet_ntoa(cli_addr.sin_addr), ntohs(cli_addr.sin_port), message.req_text);
+ //    }
  
-    close(sockfd);
+    //close(sockfd);
     return 0;
 }
 
