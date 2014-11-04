@@ -15,7 +15,7 @@
 #include <string.h>
 #include "duckchat.h"
 #define BUFLEN 64 //changed this from 512
-#define PORT 9930
+#define PORT 8089
  
 void err(char *s)
 {
