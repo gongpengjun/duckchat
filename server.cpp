@@ -22,7 +22,7 @@
 //defined
 #define BUFLEN 1024
 //constants
-const char* const REQ_AR[8] = {"REQ_LOGIN",
+const char* const REQ_AR[7] = {"REQ_LOGIN",
                                 "REQ_LOGOUT",
                                 "REQ_JOIN",
                                 "REQ_LEAVE",
