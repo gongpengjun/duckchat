@@ -62,7 +62,7 @@ int main(int argc, char **argv)
         //for multiple requests maybe
         struct request *requests = (struct request*) malloc(sizeof (struct request) + BUFLEN);  
         int bal = 0;
-        bal = recvfrom(sockfd, requests, sizeof requests, 0, &recAddr, &fromlen);
+        bal = recvfrom(sockfd, requests, 1024, 0, &recAddr, &fromlen);
         if(bal > 0) {
             printf("recv()'d %d bytes of data in buf\n", bal);
             readRequestType(requests, bal);       
@@ -119,7 +119,6 @@ int readRequestType(struct request *r, int b)
     printf("made it to method \n");
     //check if the user is logged in
     switch(ntohl(r->req_type)) {
-        printf("switchhh case beforreeeee\n");
         case REQ_LOGIN:
             if(sizeof(struct request_login) == b) {
                 printf("switchhh case login valid\n");
@@ -157,7 +156,6 @@ int readRequestType(struct request *r, int b)
                 break;
             }
         case REQ_SAY:
-
             if(sizeof(struct request_say) == b) {
                 printf("switchhh case say valid\n");
                 fin = sayReq((struct request_say*) r);
@@ -184,6 +182,8 @@ int readRequestType(struct request *r, int b)
                 printf("switchhh case who INvalid\n");
                 break;
             }
+        default:
+            printf("Hit Default\n");
     }
     return fin;
 }
