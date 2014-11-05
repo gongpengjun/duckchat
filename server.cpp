@@ -49,6 +49,7 @@ int main(int argc, char **argv)
         // requests = (struct request*) malloc(sizeof (struct request) + BUFLEN); 
         struct request requests;  
         int bal = 0;
+        printf("joe says print here\n");
         bal = recvfrom(sockfd, &requests, (sizeof (struct request) + 1024), 0, &recAddr, &fromlen);
         if(bal > 0) {
             printf("recv()'d %d bytes of data in buf\n", bal);
