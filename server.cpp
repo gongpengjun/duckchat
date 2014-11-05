@@ -41,19 +41,20 @@ int main(int argc, char **argv)
 {
     addrAr = NULL;
     sockfd = 0;
-    char buf[BUFLEN];
+    char buf[REQ_MAX];
     connectToSocket(argv[1], argv[2]);
     while(1)
     {
         //for multiple requests maybe
         // requests = (struct request*) malloc(sizeof (struct request) + BUFLEN); 
-        struct request requests;  
+        struct request *requests;  
         int bal = 0;
         printf("joe says print here\n");
-        bal = recvfrom(sockfd, &requests, (sizeof (struct request)), 0, &recAddr, &fromlen);
+        bal = recvfrom(sockfd, buf, REQ_MAX, 0, &recAddr, &fromlen);
         if(bal > 0) {
             printf("recv()'d %d bytes of data in buf\n", bal);
-            readRequestType(&requests, bal);       
+            requests = (request*) buf;
+            readRequestType(requests, bal);       
         }    
     }
     return 0;
@@ -106,6 +107,10 @@ int readRequestType(struct request *r, int b)
     int fin = 0;
     printf("made it to method \n");
     //check if the user is logged in
+    if(r->req_type > 7 || r->req_type < 0){
+            printf("[ERROR] Issue during recieve from client\n");
+            return;
+    }
     switch(ntohl(r->req_type)) {
         case REQ_LOGIN:
             if(sizeof(struct request_login) == b) {

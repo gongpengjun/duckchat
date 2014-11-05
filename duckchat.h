@@ -13,6 +13,7 @@
 #define packed __attribute__((packed))
 
 /* Define the length limits */
+#define REQ_MAX 4096
 #define USERNAME_MAX 32
 #define CHANNEL_MAX 32
 #define SAY_MAX 64
