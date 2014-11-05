@@ -119,6 +119,7 @@ int readRequestType(struct request *r, int b)
     printf("made it to method \n");
     //check if the user is logged in
     switch(ntohl(r->req_type)) {
+        printf("switchhh case beforreeeee\n");
         case REQ_LOGIN:
             if(sizeof(struct request_login) == b) {
                 printf("switchhh case login valid\n");
@@ -156,7 +157,7 @@ int readRequestType(struct request *r, int b)
                 break;
             }
         case REQ_SAY:
-            printf("switchhh case say before if INvalid\n");
+
             if(sizeof(struct request_say) == b) {
                 printf("switchhh case say valid\n");
                 fin = sayReq((struct request_say*) r);
