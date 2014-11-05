@@ -55,7 +55,8 @@ int main(int argc, char **argv)
             printf("recv()'d %d bytes of data in buf\n", bal);
             requests = (request*) buf;
             readRequestType(requests, bal);       
-        }    
+        } 
+        free(requests);   
     }
     return 0;
 }
@@ -107,7 +108,7 @@ int readRequestType(struct request *r, int b)
     int fin = 0;
     printf("made it to method \n");
     //check if the user is logged in
-    if(r->req_type > 7 || r->req_type < 0){
+    if(r->req_type > 6 || r->req_type < 0){
             printf("[ERROR] Issue during recieve from client\n");
             return;
     }
