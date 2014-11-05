@@ -60,7 +60,8 @@ int main(int argc, char **argv)
     while(1)
     {
         //for multiple requests maybe
-        struct request *requests = (struct request*) malloc(sizeof (struct request) + BUFLEN);  
+        // = (struct request*) malloc(sizeof (struct request));
+        struct request *requests;  
         int bal = 0;
         bal = recvfrom(sockfd, requests, 1024, 0, &recAddr, &fromlen);
         if(bal > 0) {
