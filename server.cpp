@@ -41,22 +41,22 @@ int main(int argc, char **argv)
 {
     addrAr = NULL;
     sockfd = 0;
-    char buf[REQ_MAX];
     connectToSocket(argv[1], argv[2]);
     while(1)
     {
         //for multiple requests maybe
         // requests = (struct request*) malloc(sizeof (struct request) + BUFLEN); 
-        struct request *requests;  
+        char *buf = new char[REQ_MAX];
+	struct request *requests;  
         int bal = 0;
-        printf("joe says print here\n");
-        bal = recvfrom(sockfd, buf, REQ_MAX, 0, &recAddr, &fromlen);
+        bal = recvfrom(sockfd, buf, REQ_MAX, 0, (struct sockaddr*)&recAddr, &fromlen);
         if(bal > 0) {
             printf("recv()'d %d bytes of data in buf\n", bal);
             requests = (request*) buf;
             readRequestType(requests, bal);       
         } 
-        free(requests);   
+       requests = NULL;
+       delete[] buf;   
     }
     return 0;
 }
@@ -110,10 +110,10 @@ int readRequestType(struct request *r, int b)
     //check if the user is logged in
     if(r->req_type > 6 || r->req_type < 0){
             printf("[ERROR] Issue during recieve from client\n");
-            return;
+            return -1;
     }
     switch(ntohl(r->req_type)) {
-        case REQ_LOGIN:
+        case 0:
             if(sizeof(struct request_login) == b) {
                 printf("switchhh case login valid\n");
                 fin = loginReq((struct request_login*) r);
@@ -149,7 +149,7 @@ int readRequestType(struct request *r, int b)
                 printf("switchhh case leave INvalid\n");
                 break;
             }
-        case REQ_SAY:
+        case 4:
             if(sizeof(struct request_say) == b) {
                 printf("switchhh case say valid\n");
                 fin = sayReq((struct request_say*) r);
