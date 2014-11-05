@@ -60,13 +60,13 @@ int main(int argc, char **argv)
     while(1)
     {
         //for multiple requests maybe
-        // = (struct request*) malloc(sizeof (struct request));
-        struct request *requests;  
+        // requests = (struct request*) malloc(sizeof (struct request) + BUFLEN); 
+        struct request requests;  
         int bal = 0;
-        bal = recvfrom(sockfd, requests, 1024, 0, &recAddr, &fromlen);
+        bal = recvfrom(sockfd, &requests, sizeof requests, 0, &recAddr, &fromlen);
         if(bal > 0) {
             printf("recv()'d %d bytes of data in buf\n", bal);
-            readRequestType(requests, bal);       
+            readRequestType(&requests, bal);       
         }    
     }
     return 0;
