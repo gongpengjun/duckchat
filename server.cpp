@@ -112,8 +112,15 @@ int readRequestType(struct request *r, int b)
             printf("[ERROR] Issue during recieve from client\n");
             return -1;
     }
-    switch(ntohl(r->req_type)) {
-        case 0:
+    int netHost = 0;
+    netHost = ntohl(r->req_type);
+    if(netHost > 6 || netHost < 0) {
+	netHost = r->req_type;
+    }
+
+    switch(netHost) {
+	//printf("the value isss: %s \n", ntohl(r-req_type));
+        case REQ_LOGIN:
             if(sizeof(struct request_login) == b) {
                 printf("switchhh case login valid\n");
                 fin = loginReq((struct request_login*) r);
@@ -132,6 +139,7 @@ int readRequestType(struct request *r, int b)
                 break;
             }   
         case REQ_JOIN:
+		printf("join case made \n");
             if(sizeof(struct request_join) == b) {
                 printf("switchhh case join valid\n");
                 fin = joinReq((struct request_join*) r);
@@ -149,7 +157,7 @@ int readRequestType(struct request *r, int b)
                 printf("switchhh case leave INvalid\n");
                 break;
             }
-        case 4:
+        case REQ_SAY:
             if(sizeof(struct request_say) == b) {
                 printf("switchhh case say valid\n");
                 fin = sayReq((struct request_say*) r);
@@ -177,7 +185,7 @@ int readRequestType(struct request *r, int b)
                 break;
             }
         default:
-            printf("Hit Default\n");
+            printf("this is default: %d \n", ntohl(r->req_type));
     }
     return fin;
 }
