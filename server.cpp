@@ -85,7 +85,7 @@ int sayReq(struct request_say *rs)
 //handle login requests
 int loginReq(struct request_login *rl)
 {
-
+    printf("user name: %s \n", rl->req_username);
     return 0;
 }
 //handle login requests
