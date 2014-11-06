@@ -24,7 +24,7 @@
 using namespace std;
 //globals
 socklen_t fromlen;
-struct sockaddr recAddr;
+struct sockaddr_in recAddr;
 int sockfd;
 struct addrinfo *addrAr;
 map<string, string> addrToUser;
@@ -77,10 +77,10 @@ int sayReq(struct request_say *rs)
 int loginReq(struct request_login *rl)
 {
     //printf("user name: %s \n", rl->req_username);
-    struct sockaddr_in* address = (struct sock_addr_in*) &reqAddr;
+    struct sockaddr_in* address = (struct sockaddr_in*) &recAddr;
     string username = rl->req_username;
     char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
-    inet_ntop(AF_INET, &(recAddr->sin_addr), addrString, BUFLEN);
+    inet_ntop(AF_INET, &(recAddr.sin_addr), addrString, BUFLEN);
     string realAddrString = addrString;
     free (addrString);
     string aTmp =  addrToUser[username];
