@@ -29,14 +29,17 @@ int sockfd;
 struct addrinfo *addrAr;
 map<string, string> addrToUser;
 map<string, string> userToAddr;
-map<string,int> usrLisChan;
-map<string,int> usrtlkChan;
-vector<string> users;
+map<string,vector<string>> usrLisChan;
+map<string,string> usrTlkChan;
+map<string,vector<string>> chanTlkUser;
+vector<string> channels;
 //methods
 int connectToSocket(char*, char*);
 void err(char*);
 int readRequestType(struct request*, int);
 int sayReq(struct request_say*);
+int checkValidAddr();
+string getReqAddr();
 
 //program
 int main(int argc, char **argv)
@@ -62,6 +65,42 @@ int main(int argc, char **argv)
     }
     return 0;
 }
+//returns string of username of current request address
+string getReqAddr()
+{
+    //new request address info
+    struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
+    char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
+    //make address string
+    inet_ntop(AF_INET, &address, addrString, BUFLEN);
+    //have tmp var
+    string realAddrString = addrString;
+    free (addrString);
+    string aTmp = addrToUser[realAddrString];
+    return aTmp;
+
+}
+//check if current request address is valid or exist in map
+int checkValidAddr(struct request *r) 
+{
+    //new request address info
+    struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
+    char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
+    //make address string
+    inet_ntop(AF_INET, &address, addrString, BUFLEN);
+    //have tmp var
+    string realAddrString = addrString;
+    free (addrString);
+    //look in map for address
+    string aTmp = addrToUser[realAddrString];
+    if(aTmp != "") {
+        //valid addr and user
+        //may need to change addr
+        return 0;
+    } else {
+        return -1;
+    }
+}
 //for errors
 void err(char *str)
 {
@@ -71,39 +110,111 @@ void err(char *str)
 //handle say requests
 int sayReq(struct request_say *rs)
 {
+    /*
+    get username of request
+    get channel of request
+
+    */
     return 0;
 }
 //handle login requests
 int loginReq(struct request_login *rl)
 {
-    //printf("user name: %s \n", rl->req_username);
+    //new request address info
     struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
+    //username
     string username = rl->req_username;
     char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
-    inet_ntop(AF_INET, &recAddr, addrString, BUFLEN);
+    //make address string
+    inet_ntop(AF_INET, &address, addrString, BUFLEN);
+    //have tmp var
     string realAddrString = addrString;
     free (addrString);
-    string aTmp =  addrToUser[username];
+    //look in map for address
+    string aTmp =  addrToUser[realAddrString];
     if(aTmp == "") {
-        printf("New User: \n");
+        printf("New User: %s \n", username);
         addrToUser[realAddrString] = username;
         userToAddr[username] = realAddrString;
+        return 1;
     } else {
-        printf("Old User: \n");
+        printf("Old User: %s \n", username);
         addrToUser.erase(aTmp);
         addrToUser[realAddrString] = username;
         userToAddr[username] = realAddrString;
+        return 0;
     }
     return 0;
 }
 //handle login requests
 int logoutReq(struct request_logout *rl)
 {
+    //new request address info
+    struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
+    char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
+    //make address string
+    inet_ntop(AF_INET, &address, addrString, BUFLEN);
+    //have tmp var
+    string realAddrString = addrString;
+    free (addrString);
+    string user;
+    //get username 
+    user = addrToUser[realAddrString];
+    map<string,string>::iterator it;
+    //delete address and user in both maps
+    it = addrToUser.find(realAddrString);
+    addrToUser.erase(it);
+    it = userToAddr.find(userToAddr);
+    userToAddr.erase(it);
+    //delete user and channel stuff
+    it = usrLisChan.find(user);
+    usrLisChan.erase(it);
+    it = usrTlkChan.find(user);
+    usrTlkChan.erase(it);
     return 0;
 }
 //handle login requests
 int joinReq(struct request_join *rj)
 {
+    //create tmp vars for usename and channel of request
+    string chan = (string)rj->req_channel;
+    string user = getReqAddr();
+    int trig = 0;
+    //tmp vector for channel user is listening to
+    vector<string> vTmpL = usrLisChan[user];
+    //tmp string for channel user is talking to
+    string sTmpT = usrTlkChan[user];
+    //tmp vec for users on channel
+    //vector<string> vTmpU = chanTlkUser[chan];
+    //new channel case
+    // for(int j=0; j<vTmpU.size(); j++) {
+    //     if(vTmpU[j] == user) {
+    //         printf("User is already in channel: %s \n", user );
+    //         trig = 1;
+    //     }
+    // }
+    // if(trig == 0) {
+    //     //add user to channel in map
+    //     printf("User is getting added to chanTlkUser: %s \n", user );
+    //     vTmpU.push_back[user];
+    // }
+    //trig = 0;
+    for(int i=0; i<channels.size(); i++) {
+        if(channels[i] == chan) {
+            trig = 1;
+        }
+    }
+    if(trig == 0) {
+        //add new channel
+        printf("Channel is getting added to channels global array: %s \n", chan);
+        channels.push_back(chan);
+    }
+    //add new channel to back
+    vTmpL.push_back(chan);
+    sTmpT = chan;
+    //add vectors back to map, new channel at the back.
+    usrLisChan[user] = vTmpL;
+    usrTlkChan[user] = sTmpT;
     return 0;
 }
 //handle login requests
@@ -127,9 +238,17 @@ int readRequestType(struct request *r, int b)
     int fin = 0;
     printf("made it to method \n");
     //check if the user is logged in
-    if(r->req_type > 6 || r->req_type < 0){
+    if(r->req_type > 6 || r->req_type < 0) {
             printf("[ERROR] Issue during recieve from client\n");
             return -1;
+    }
+    //check if request address is valid
+    if(r->req_type != 0) {
+        if(checkValidAddr(r) == -1) {
+            //bad address, return
+            printf("Error checking addres \n");
+            return -1;
+        } 
     }
     int netHost = 0;
     netHost = ntohl(r->req_type);
@@ -138,7 +257,7 @@ int readRequestType(struct request *r, int b)
     }
 
     switch(netHost) {
-	//printf("the value isss: %s \n", ntohl(r-req_type));
+	//printf("the value isss: %s \n", ntohl(r->req_type));
         case REQ_LOGIN:
             if(sizeof(struct request_login) == b) {
                 printf("switchhh case login valid\n");
@@ -158,7 +277,7 @@ int readRequestType(struct request *r, int b)
                 break;
             }   
         case REQ_JOIN:
-		printf("join case made \n");
+		    //printf("join case made \n");
             if(sizeof(struct request_join) == b) {
                 printf("switchhh case join valid\n");
                 fin = joinReq((struct request_join*) r);
