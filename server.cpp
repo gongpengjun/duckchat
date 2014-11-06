@@ -27,6 +27,8 @@ socklen_t fromlen;
 struct sockaddr recAddr;
 int sockfd;
 struct addrinfo *addrAr;
+map<string, string> addrToUser;
+map<string, string> userToAddr;
 map<string,int> usrLisChan;
 map<string,int> usrtlkChan;
 vector<string> users;
@@ -46,10 +48,10 @@ int main(int argc, char **argv)
     {
         //for multiple requests maybe
         // requests = (struct request*) malloc(sizeof (struct request) + BUFLEN); 
-        char *buf = new char[REQ_MAX];
-	struct request *requests;  
+        char *buf = new char[BUFLEN];
+	    struct request *requests;  
         int bal = 0;
-        bal = recvfrom(sockfd, buf, REQ_MAX, 0, (struct sockaddr*)&recAddr, &fromlen);
+        bal = recvfrom(sockfd, buf, BUFLEN, 0, (struct sockaddr*)&recAddr, &fromlen);
         if(bal > 0) {
             printf("recv()'d %d bytes of data in buf\n", bal);
             requests = (request*) buf;
@@ -74,7 +76,24 @@ int sayReq(struct request_say *rs)
 //handle login requests
 int loginReq(struct request_login *rl)
 {
-    printf("user name: %s \n", rl->req_username);
+    //printf("user name: %s \n", rl->req_username);
+    struct sockaddr_in address = (struct sock_addr_in*) &reqAddr;
+    string username = rl->req_username;
+    char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
+    inet_ntop(AF_INET, &(recAddr->sin_addr), addrString, BUFLEN);
+    string realAddrString = addrString;
+    free (addrString);
+    string aTmp =  addrToUser[username];
+    if(aTmp == "") {
+        printf("New User: \n");
+        addrToUser[realAddrString] = username;
+        userToAddr[username] = realAddrString;
+    } else {
+        printf("Old User: \n");
+        addrToUser.erase(aTmp);
+        addrToUser[realAddrString] = username;
+        userToAddr[username] = realAddrString;
+    }
     return 0;
 }
 //handle login requests
@@ -115,7 +134,7 @@ int readRequestType(struct request *r, int b)
     int netHost = 0;
     netHost = ntohl(r->req_type);
     if(netHost > 6 || netHost < 0) {
-	netHost = r->req_type;
+	   netHost = r->req_type;
     }
 
     switch(netHost) {
