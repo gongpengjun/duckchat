@@ -153,6 +153,7 @@ int sayReq(struct request_say *rs)
         //add username (from) and message 
         strncpy(msg->txt_username, username.c_str(), strlen(username.c_str()));
         strncpy(msg->txt_text, message.c_str(), strlen(message.c_str()));
+        strncpy(msg->txt_channel, channel.c_str(), strlen(channel.c_str()));
         //send message
 	    int size = sizeof(struct sockaddr_in);
         int res= sendto(sockfd, msg, sizeof(struct text_say), 0, address, size);
