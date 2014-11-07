@@ -58,7 +58,7 @@ int main(int argc, char **argv)
         if(bal > 0) {
             printf("recv()'d %d bytes of data in buf\n", bal);
             requests = (request*) buf;
-            readRequestType(requests, bal);  
+            int valid = readRequestType(requests, bal);  
             
 	    map<string,string>::iterator it;
             if(!addrToUser.empty()) {
@@ -133,6 +133,7 @@ int sayReq(struct request_say *rs)
     string username = getReqAddr();
     //get list of users on channel from usrLisChan
     vector<string> tmpU = usrLisChan[username];
+
     //for all users on the channel
         //write the message to those users by there address
     for(int i=0; i<tmpU.size(); i++) {
