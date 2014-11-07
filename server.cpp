@@ -196,6 +196,7 @@ int loginReq(struct request_login *rl)
 int logoutReq(struct request_logout *rl)
 {
     //new request address info
+    cout << "Logout REquesssttt \n";
     struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
     char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
     //make address string
