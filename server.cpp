@@ -63,15 +63,15 @@ int main(int argc, char **argv)
 	    map<string,string>::iterator it;
             if(!addrToUser.empty()) {
 		for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
-                    cout << it->first << " that is key.\n";
-                    cout << it->second << " that is value.\n";
+                    cout << it->first << " that is the address.\n";
+                    cout << it->second << " that is the user.\n";
                 }  
 	    }
             map<string,string>::iterator its;
 	    if(!userToAddr.empty()) {
                 for(its = userToAddr.begin(); its != userToAddr.end(); its++) {
-                    cout << its->first << " that is key.\n";
-                    cout << its->second << " that is value.\n";
+                    cout << its->first << " that is the user.\n";
+                    cout << its->second << " that is the address.\n";
                 }
 	    }    
         } 
