@@ -142,7 +142,9 @@ int sayReq(struct request_say *rs)
         cout << "user: " << username << " on channel: " << tmpU[i] << "\n";
         //get address of current user
         struct sockaddr* address;
-        string ad = userToAddr[tmpU[i]];
+        
+        map<string, string>::iterator hit = userToAddr.find(tmpU[i]);
+        string ad = hit->second;
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
         //move ad to t (address)
         strncpy(s, ad.c_str(), strlen(ad.c_str()));
