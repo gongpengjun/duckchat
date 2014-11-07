@@ -147,7 +147,7 @@ int sayReq(struct request_say *rs)
     for(int i=0; i<tmpU.size(); i++) {
         cout << "user: " << username << " on channel: " << tmpU[i] << "\n";
         //get address of current user
-        struct sockaddr_in* address;
+        struct sockaddr* address;
         string ad = userToAddr[tmpU[i]];
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
         //move ad to t (address)
