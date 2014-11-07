@@ -142,7 +142,7 @@ int sayReq(struct text_say *rs)
         string ad = userToAddr[tmpU[i]];
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
         //from ad to t
-        strncpy(s, ad, strlen(ad));
+        strncpy(s, ad.c_str(), strlen(ad.c_str()));
         //from s to address
         inet_pton(AF_INET, s, &address);
         //setup message to send
