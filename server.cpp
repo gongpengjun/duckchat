@@ -182,11 +182,13 @@ int loginReq(struct request_login *rl)
     string user =  addrToUser[realAddrString];
     //if we have a copy of logins address erase it
     if(user != "") {
+        cout << "HAYO USER: " << user << " \n";
         addrToUser.erase(realAddrString);
     } 
     string adr = userToAddr[username];
     //if there is username of same, erase
     if(adr != "") {
+        cout << "HAYO ADDRESS: " << adr << " \n";
         userToAddr.erase(username);
     }
     cout << "username in login req: " << username << "\n";
