@@ -147,13 +147,13 @@ int sayReq(struct request_say *rs)
     for(int i=0; i<tmpU.size(); i++) {
         cout << "user: " << username << " on channel: " << tmpU[i] << "\n";
         //get address of current user
-        struct sockaddr_in* address;
+        struct sockaddr_in address;
         string ad = userToAddr[tmpU[i]];
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
         //move ad to t (address)
         strncpy(s, ad.c_str(), strlen(ad.c_str()));
         //from s to address and format
-        inet_pton(AF_INET, s, &(address->sin_addr));
+        inet_pton(AF_INET, s, &(address.sin_addr));
         //setup message to send
         struct text_say *msg= (struct text_say*) malloc(sizeof(struct text_say));
         //set message type
@@ -163,8 +163,8 @@ int sayReq(struct request_say *rs)
         strncpy(msg->txt_text, message.c_str(), SAY_MAX);
         strncpy(msg->txt_channel, channel.c_str(), CHANNEL_MAX);
         //send message
-	    size_t size = sizeof(struct sockaddr_in*);
-        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, address, size);
+	    size_t size = sizeof(struct sockaddr_in);
+        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, (struct sockaddr*)&address, size);
         if (res == -1) {
             cout << "sendto very badd \n";
             return -1;
