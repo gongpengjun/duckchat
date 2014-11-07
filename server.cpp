@@ -29,9 +29,9 @@ int sockfd;
 struct addrinfo *addrAr;
 map<string, string> addrToUser;
 map<string, string> userToAddr;
-map<string,vector<string>> usrLisChan;
+map<string,vector<string> > usrLisChan;
 map<string,string> usrTlkChan;
-map<string,vector<string>> chanTlkUser;
+map<string,vector<string> > chanTlkUser;
 vector<string> channels;
 //methods
 int connectToSocket(char*, char*);
@@ -133,13 +133,15 @@ int loginReq(struct request_login *rl)
     //look in map for address
     string aTmp =  addrToUser[realAddrString];
     if(aTmp == "") {
-        printf("New User: %s \n", username);
-        addrToUser[realAddrString] = username;
+       // printf("New User: %s \n",(char*) username);
+        cout << "new User";
+	addrToUser[realAddrString] = username;
         userToAddr[username] = realAddrString;
         return 1;
     } else {
-        printf("Old User: %s \n", username);
-        addrToUser.erase(aTmp);
+        //printf("Old User: %s \n", (char*)username);
+        cout << "old user";
+	addrToUser.erase(aTmp);
         addrToUser[realAddrString] = username;
         userToAddr[username] = realAddrString;
         return 0;
@@ -164,13 +166,15 @@ int logoutReq(struct request_logout *rl)
     //delete address and user in both maps
     it = addrToUser.find(realAddrString);
     addrToUser.erase(it);
-    it = userToAddr.find(userToAddr);
-    userToAddr.erase(it);
+    //it.clear();
+    map<string,string>::iterator its;
+    its = userToAddr.find(user);
+    userToAddr.erase(its);
     //delete user and channel stuff
-    it = usrLisChan.find(user);
-    usrLisChan.erase(it);
-    it = usrTlkChan.find(user);
-    usrTlkChan.erase(it);
+    //it = usrLisChan.find(user);
+    //usrLisChan.erase(it);
+    //it = usrTlkChan.find(user);
+    //usrTlkChan.erase(it);
     return 0;
 }
 //handle login requests
@@ -206,8 +210,9 @@ int joinReq(struct request_join *rj)
     }
     if(trig == 0) {
         //add new channel
-        printf("Channel is getting added to channels global array: %s \n", chan);
-        channels.push_back(chan);
+       // printf("Channel is getting added to channels global array: %s \n", chan);
+         cout << "Channel is gettting added to glob array";
+	 channels.push_back(chan);
     }
     //add new channel to back
     vTmpL.push_back(chan);
