@@ -164,7 +164,7 @@ int sayReq(struct request_say *rs)
         strncpy(msg->txt_channel, channel.c_str(), CHANNEL_MAX);
         //send message
 	    int size = sizeof(struct sockaddr);
-        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, address, size);
+        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, &(address->sin_addr), size);
         if (res == -1) {
             cout << "sendto very badd \n";
             return -1;
