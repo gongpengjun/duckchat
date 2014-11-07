@@ -199,12 +199,13 @@ int loginReq(struct request_login *rl)
     if(hit != userToAddr.end()) {
         userToAddr.erase(username);
     }
-    hit = usrLisChan.find(username);
-    if(hit != usrLisChan.end()) {
+
+    map<string, vector<string> >::iterator git = usrLisChan.find(username);
+    if(git != usrLisChan.end()) {
         usrLisChan.erase(username);
     }
-    hit = usrTlkChan.find(username);
-    if(hit != usrTlkChan.end()) {
+    git = usrTlkChan.find(username);
+    if(git != usrTlkChan.end()) {
         usrTlkChan.erase(username);
     }
 
