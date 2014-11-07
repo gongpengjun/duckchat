@@ -136,7 +136,7 @@ int sayReq(struct request_say *rs)
     //for all users on the channel
         //write the message to those users by there address
     for(int i=0; i<tmpU.size(); i++) {
-        cout << "user: " << tmpU[i] << " on channel: " << channel << "\n";
+        cout << "user: " << username << " on channel: " << tmpU[i] << "\n";
         //get address of current user
         struct sockaddr* address = (struct sockaddr*)&recAddr;
         string ad = userToAddr[tmpU[i]];
