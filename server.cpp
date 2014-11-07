@@ -60,14 +60,14 @@ int main(int argc, char **argv)
             requests = (request*) buf;
             readRequestType(requests, bal);  
             /*
-	    map<string,string>::const_iterator it;
+	    map<string,string>::iterator it;
             if(!addrToUser.empty()) {
 		for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
                     cout << it->first << " that is key.\n";
                     cout << it->second << " that is value.\n";
                 }  
 	    }
-            map<string,string>::const_iterator its;
+            map<string,string>::iterator its;
 	    if(!userToAddr.empty()) {
                 for(its = userToAddr.begin(); its != addrToUser.end(); its++) {
                     cout << its->first << " that is key.\n";
