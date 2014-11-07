@@ -123,24 +123,24 @@ void err(char *str)
     exit(1);
 }
 //handle say requests
-int sayReq(struct request_say *rs)
+int sayReq(struct text_say *rs)
 {
     /*
     get username of request
     get channel of request*/
     string username = rs->txt_username;
     string channel = rs->txt_channel;
-    string message - rs->txt_text;
+    string message = rs->txt_text;
     //get list of users on channel from usrLisChan
-    vector<string> tmpU = usrLisChan[user];
+    vector<string> tmpU = usrLisChan[username];
     //for all users on the channel
         //write the message to those users by there address
     for(int i=0; i<tmpU.size(); i++) {
         cout << "user: " << tmpU[i] << " on channel: " << channel << "\n";
         //get address of current user
         struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
-        string ad = userToAddr[tmpU[i]];
-        inet_pton(AF_INET, ad, address);
+        char* ad = (char*)userToAddr[tmpU[i]];
+        inet_pton(AF_INET, ad, &address);
         struct text_say *msg= (struct text_say*) malloc(sizeof(struct text_say));
         msg->txt_type= htonl(TXT_SAY);
         msg->txt_username = (char*)tmpU[i];
