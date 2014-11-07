@@ -175,14 +175,20 @@ int loginReq(struct request_login *rl)
     char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
     //make address string
     inet_ntop(AF_INET, &address, addrString, BUFLEN);
-    //have tmp var
+    //this is our readable address
     string realAddrString = addrString;
     free (addrString);
-    //look in map for address
-    string aTmp =  addrToUser[realAddrString];
-    if(aTmp != "") {
-        addrToUser.erase(aTmp);
+    //look for username of readable address
+    string user =  addrToUser[realAddrString];
+    //if we have a copy of logins address erase it
+    if(user != "") {
+        addrToUser.erase(realAddrString);
     } 
+    string adr = userToAddr[username];
+    //if there is username of same, erase
+    if(adr != "") {
+        userToAddr.erase(username);
+    }
     cout << "username in login req: " << username << "\n";
     cout << "address in login req: " << realAddrString << "\n";
     addrToUser[realAddrString] = username;
@@ -222,7 +228,7 @@ int logoutReq(struct request_logout *rl)
 //handle login requests
 int joinReq(struct request_join *rj)
 {
-    //create tmp vars for usename and channel of request
+    //create tmp vars for username and channel of request
     string chan = (string)rj->req_channel;
 
     string user = getReqAddr();
