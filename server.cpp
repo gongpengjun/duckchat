@@ -123,14 +123,14 @@ void err(char *str)
     exit(1);
 }
 //handle say requests
-int sayReq(struct text_say *rs)
+int sayReq(struct request_say *rs)
 {
     /*
     get username of request
     get channel of request*/
-    string username = rs->txt_username;
-    string channel = rs->txt_channel;
-    string message = rs->txt_text;
+    string username = rs->req_username;
+    string channel = rs->req_channel;
+    string message = rs->req_text;
     //get list of users on channel from usrLisChan
     vector<string> tmpU = usrLisChan[username];
     //for all users on the channel
@@ -138,7 +138,7 @@ int sayReq(struct text_say *rs)
     for(int i=0; i<tmpU.size(); i++) {
         cout << "user: " << tmpU[i] << " on channel: " << channel << "\n";
         //get address of current user
-        struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
+        struct sockaddr* address = (struct sockaddr*)&recAddr;
         string ad = userToAddr[tmpU[i]];
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
         //from ad to t
@@ -148,10 +148,11 @@ int sayReq(struct text_say *rs)
         //setup message to send
         struct text_say *msg= (struct text_say*) malloc(sizeof(struct text_say));
         msg->txt_type= htonl(TXT_SAY);
-        strncpy(msg->txt_username, username.c_str());
-        strncpy(msg->txt_text, message.c_str());
+        strncpy(msg->txt_username, username.c_str(), strlen(username.c_str()));
+        strncpy(msg->txt_text, message.c_str(), strlen(message.c_str()));
         //send message
-        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, address, sizeof(struct sockaddr_in));
+	int size = sizeof(struct sockaddr_in);
+        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, address, size);
         if (res == -1) {
             cout << "sendto very badd \n";
             return -1;
@@ -241,7 +242,7 @@ int joinReq(struct request_join *rj)
     if(trig == 0) {
         //add user to channel in map
         cout << "user gets added to channel map\n";
-        vTmpU.push_back[user];
+        vTmpU.push_back(user);
     }
     trig = 0;
     for(int i=0; i<channels.size(); i++) {
