@@ -59,13 +59,13 @@ int main(int argc, char **argv)
             printf("recv()'d %d bytes of data in buf\n", bal);
             requests = (request*) buf;
             readRequestType(requests, bal);  
-            map<string,string>::iterator it;
-            for(it = addrToUser.begin(); it != addrToUser.end(), it++) {
+            map<string,string>::const_iterator it;
+            for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
                 cout << it->first << " that is key.\n";
                 cout << it->second << " that is value.\n";
             }  
-            map<string,string>::iterator its;
-            for(its = userToAddr.begin(); its != addrToUser.end(), its++) {
+            map<string,string>::const_iterator its;
+            for(its = userToAddr.begin(); its != addrToUser.end(); its++) {
                 cout << its->first << " that is key.\n";
                 cout << its->second << " that is value.\n";
             }    
