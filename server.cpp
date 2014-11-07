@@ -178,18 +178,16 @@ int loginReq(struct request_login *rl)
     free (addrString);
     //look in map for address
     string aTmp =  addrToUser[realAddrString];
-    if(aTmp == "") {
+    if(aTmp != "") {
+        addrToUser.erase(aTmp);
         cout << "new User\n";
 	    addrToUser[realAddrString] = username;
         userToAddr[username] = realAddrString;
-        return 1;
-    } else {
-        cout << "old user\n";
-	    addrToUser.erase(aTmp);
-        addrToUser[realAddrString] = username;
-        userToAddr[username] = realAddrString;
-        return 0;
-    }
+    } 
+    cout << "username in login req: " << username << "\n";
+    cout << "address in login req: " << realAddrString << "\n";
+    addrToUser[realAddrString] = username;
+    userToAddr[username] = realAddrString;
     return 0;
 }
 //handle login requests
