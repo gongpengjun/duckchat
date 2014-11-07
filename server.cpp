@@ -347,6 +347,7 @@ int readRequestType(struct request *r, int b)
        netHost = r->req_type;
     }
     //check if request address is valid
+    cout << netHost << " this is the request type!!!! \n";
     if(netHost != 0) {
         if(checkValidAddr(r) == -1) {
             //bad address, return
