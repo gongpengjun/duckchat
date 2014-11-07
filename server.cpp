@@ -144,13 +144,13 @@ int loginReq(struct request_login *rl)
     string aTmp =  addrToUser[realAddrString];
     if(aTmp == "") {
        // printf("New User: %s \n",(char*) username);
-        cout << "new User";
+        cout << "new User\n";
 	    addrToUser[realAddrString] = username;
         userToAddr[username] = realAddrString;
         return 1;
     } else {
         //printf("Old User: %s \n", (char*)username);
-        cout << "old user";
+        cout << "old user\n";
 	    addrToUser.erase(aTmp);
         addrToUser[realAddrString] = username;
         userToAddr[username] = realAddrString;
