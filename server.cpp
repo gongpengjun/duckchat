@@ -31,7 +31,7 @@ map<string, string> addrToUser;
 map<string, string> userToAddr;
 map<string,vector<string> > usrLisChan;
 map<string,string> usrTlkChan;
-map<string,vector<string> > chanTlkUser;
+//map<string,vector<string> > chanTlkUser;
 vector<string> channels;
 //methods
 int connectToSocket(char*, char*);
@@ -58,7 +58,17 @@ int main(int argc, char **argv)
         if(bal > 0) {
             printf("recv()'d %d bytes of data in buf\n", bal);
             requests = (request*) buf;
-            readRequestType(requests, bal);       
+            readRequestType(requests, bal);  
+            map<string,string>::iterator it;
+            for(it = addrToUser.begin(); it != addrToUser.end(), it++) {
+                cout << it->first << " that is key.\n";
+                cout << it->second << " that is value.\n";
+            }  
+            map<string,string>::iterator its;
+            for(its = userToAddr.begin(); its != addrToUser.end(), its++) {
+                cout << its->first << " that is key.\n";
+                cout << its->second << " that is value.\n";
+            }    
         } 
        requests = NULL;
        delete[] buf;   
@@ -135,13 +145,13 @@ int loginReq(struct request_login *rl)
     if(aTmp == "") {
        // printf("New User: %s \n",(char*) username);
         cout << "new User";
-	addrToUser[realAddrString] = username;
+	    addrToUser[realAddrString] = username;
         userToAddr[username] = realAddrString;
         return 1;
     } else {
         //printf("Old User: %s \n", (char*)username);
         cout << "old user";
-	addrToUser.erase(aTmp);
+	    addrToUser.erase(aTmp);
         addrToUser[realAddrString] = username;
         userToAddr[username] = realAddrString;
         return 0;
@@ -207,6 +217,7 @@ int joinReq(struct request_join *rj)
         if(channels[i] == chan) {
             trig = 1;
         }
+
     }
     if(trig == 0) {
         //add new channel
@@ -241,94 +252,91 @@ int whoReq(struct request_who *rw)
 int readRequestType(struct request *r, int b) 
 {
     int fin = 0;
-    printf("made it to method \n");
-    //check if the user is logged in
-    if(r->req_type > 6 || r->req_type < 0) {
-            printf("[ERROR] Issue during recieve from client\n");
-            return -1;
+    int netHost = 0;
+    netHost = ntohl(r->req_type);
+    //check if addres is a crazy number or normal
+    if(netHost > 6 || netHost < 0) {
+       netHost = r->req_type;
     }
     //check if request address is valid
-    if(r->req_type != 0) {
+    if(netHost != 0) {
         if(checkValidAddr(r) == -1) {
             //bad address, return
-            printf("Error checking addres \n");
+            cout << "invalid address\n";
             return -1;
         } 
     }
-    int netHost = 0;
-    netHost = ntohl(r->req_type);
-    if(netHost > 6 || netHost < 0) {
-	   netHost = r->req_type;
-    }
+
+    
 
     switch(netHost) {
 	//printf("the value isss: %s \n", ntohl(r->req_type));
         case REQ_LOGIN:
             if(sizeof(struct request_login) == b) {
-                printf("switchhh case login valid\n");
+                cout << "login request\n";
                 fin = loginReq((struct request_login*) r);
                 break;
             } else {
-                printf("switchhh case login INvalid\n");
+                cout << "login request FAILED\n";
                 break;
             } 
         case REQ_LOGOUT:
             if(sizeof(struct request_logout) == b) {
-                printf("switchhh case logout valid\n");
+                cout << "logout request\n";
                 fin = logoutReq((struct request_logout*) r);
                 break;
             } else {
-                printf("switchhh case logout INvalid\n");
+                cout << "logout request bad size\n";
                 break;
             }   
         case REQ_JOIN:
 		    //printf("join case made \n");
             if(sizeof(struct request_join) == b) {
-                printf("switchhh case join valid\n");
+                cout << "join request\n";
                 fin = joinReq((struct request_join*) r);
                 break;
             } else {
-                printf("switchhh case join INvalid\n");
+                cout << "switch request bad size\n";
                 break;
             }      
         case REQ_LEAVE:
             if(sizeof(struct request_leave) == b) {
-                printf("switchhh case leave valid\n");
+                cout << "leave request\n";
                 fin = leaveReq((struct request_leave*) r);
                 break;
             } else {
-                printf("switchhh case leave INvalid\n");
+                cout << "leave request bad size\n";
                 break;
             }
         case REQ_SAY:
             if(sizeof(struct request_say) == b) {
-                printf("switchhh case say valid\n");
+                cout << "say request\n";
                 fin = sayReq((struct request_say*) r);
                 break;
             } else {
-                printf("switchhh case say INvalid\n");
+                cout << "say request bad size\n";
                 break;
             }
         case REQ_LIST:
             if(sizeof(struct request_list) == b) {
-                printf("switchhh case list valid\n");
+                cout << "list request\n";
                 fin = listReq((struct request_list*) r);
                 break;
             } else {
-                printf("switchhh case list INvalid\n");
+                cout << "list request bad size\n";
                 break;
             }
         case REQ_WHO:
             if(sizeof(struct request_who) == b) {
-                printf("switchhh case who valid\n");
+                cout << "who request\n";
                 fin = whoReq((struct request_who*) r);
                 break;
             } else {
-                printf("switchhh case who INvalid\n");
+                cout << "who request bad size\n";
                 break;
             }
         default:
-            printf("this is default: %d \n", ntohl(r->req_type));
+            cout << "default case hit!!\n";
     }
     return fin;
 }
@@ -343,19 +351,19 @@ int connectToSocket(char* ip, char* port)
     int check = 0;
     if((check = getaddrinfo(ip, port, &addressTmp, &addrAr))!= 0)
     {
-        err("Server : getaddrinfo() NOT successful\n");
+        cout << "Server : getaddrinfo() NOT successful \n";
         return false;
     }
     if((sockfd = socket(addrAr->ai_family, addrAr->ai_socktype, addrAr->ai_protocol)) == -1)
     {
-        err("Server : socket() NOT successful\n");
+        cout << "Server : socket() NOT successful \n";
         return false;
     }
     if(bind(sockfd, addrAr->ai_addr, addrAr->ai_addrlen) == -1)
     {
-        err("Server : bind() NOT successful\n");
+        cout << "Server : bind() NOT successful \n";
         return false;
     }
-    printf("socket and bind successful! \n");
+    cout << "socket and bind successful! \n";
     return true;
 }
