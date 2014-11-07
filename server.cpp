@@ -75,7 +75,16 @@ int main(int argc, char **argv)
                     cout << its->first << " is the user.\n";
                     cout << its->second << " is the addrr.\n";
                 }
-    	    }    
+    	    } 
+            for(int i=0; i<channels.size(); i++) {
+                vector<string> uOnC = chanTlkUser[channels[i]];
+                if(!uOnC.empty()) {
+                    for(int j=0; j<uOnC.size(); j++) {
+                        cout << uOnC[j] << " is user on channel: " << channels[i] << " from chanTlkUser.\n";
+                    }
+                }
+                chanTlkUser[channels[i]] = uOnC;
+            }   
         } 
        requests = NULL;
        delete[] buf;   
@@ -145,7 +154,7 @@ int sayReq(struct request_say *rs)
     //for all users on the channel
         //write the message to those users by there address
     for(int i=0; i<tmpU.size(); i++) {
-        cout << "user: " << username << " on channel: " << tmpU[i] << "\n";
+        cout << "user: " << tmpU[i] << " on channel: " << channel << "\n";
         //get address of current user
         struct sockaddr_in address;
         string ad = userToAddr[tmpU[i]];
