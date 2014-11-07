@@ -31,7 +31,7 @@ map<string, string> addrToUser;
 map<string, string> userToAddr;
 map<string,vector<string> > usrLisChan;
 map<string,string> usrTlkChan;
-//map<string,vector<string> > chanTlkUser;
+map<string,vector<string> > chanTlkUser;
 vector<string> channels;
 //methods
 int connectToSocket(char*, char*);
@@ -69,7 +69,7 @@ int main(int argc, char **argv)
 	    }
             map<string,string>::iterator its;
 	    if(!userToAddr.empty()) {
-                for(its = userToAddr.begin(); its != addrToUser.end(); its++) {
+                for(its = userToAddr.begin(); its != userToAddr.end(); its++) {
                     cout << its->first << " that is key.\n";
                     cout << its->second << " that is value.\n";
                 }
@@ -127,9 +127,31 @@ int sayReq(struct request_say *rs)
 {
     /*
     get username of request
-    get channel of request
-
-    */
+    get channel of request*/
+    string username = rs->txt_username;
+    string channel = rs->txt_channel;
+    string message - rs->txt_text;
+    //get list of users on channel from usrLisChan
+    vector<string> tmpU = usrLisChan[user];
+    //for all users on the channel
+        //write the message to those users by there address
+    for(int i=0; i<tmpU.size(); i++) {
+        cout << "user: " << tmpU[i] << " on channel: " << channel << "\n";
+        //get address of current user
+        struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
+        string ad = userToAddr[tmpU[i]];
+        inet_pton(AF_INET, ad, address);
+        struct text_say *msg= (struct text_say*) malloc(sizeof(struct text_say));
+        msg->txt_type= htonl(TXT_SAY);
+        msg->txt_username = (char*)tmpU[i];
+        msg->txt_text = (char*)message;
+        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, address, sizeof(struct sockaddr_in));
+        if (res == -1) {
+            cout << "sendto very badd \n";
+            return -1;
+        }
+        free(msg);
+    }
     return 0;
 }
 //handle login requests
@@ -148,13 +170,11 @@ int loginReq(struct request_login *rl)
     //look in map for address
     string aTmp =  addrToUser[realAddrString];
     if(aTmp == "") {
-       // printf("New User: %s \n",(char*) username);
         cout << "new User\n";
 	    addrToUser[realAddrString] = username;
         userToAddr[username] = realAddrString;
         return 1;
     } else {
-        //printf("Old User: %s \n", (char*)username);
         cout << "old user\n";
 	    addrToUser.erase(aTmp);
         addrToUser[realAddrString] = username;
@@ -204,20 +224,20 @@ int joinReq(struct request_join *rj)
     //tmp string for channel user is talking to
     string sTmpT = usrTlkChan[user];
     //tmp vec for users on channel
-    //vector<string> vTmpU = chanTlkUser[chan];
+    vector<string> vTmpU = chanTlkUser[chan];
     //new channel case
-    // for(int j=0; j<vTmpU.size(); j++) {
-    //     if(vTmpU[j] == user) {
-    //         printf("User is already in channel: %s \n", user );
-    //         trig = 1;
-    //     }
-    // }
-    // if(trig == 0) {
-    //     //add user to channel in map
-    //     printf("User is getting added to chanTlkUser: %s \n", user );
-    //     vTmpU.push_back[user];
-    // }
-    //trig = 0;
+    for(int j=0; j<vTmpU.size(); j++) {
+        if(vTmpU[j] == user) {
+            cout << "user in channel already\n";
+            trig = 1;
+        }
+    }
+    if(trig == 0) {
+        //add user to channel in map
+        cout << "user gets added to channel map\n";
+        vTmpU.push_back[user];
+    }
+    trig = 0;
     for(int i=0; i<channels.size(); i++) {
         if(channels[i] == chan) {
             trig = 1;
@@ -227,7 +247,7 @@ int joinReq(struct request_join *rj)
     if(trig == 0) {
         //add new channel
        // printf("Channel is getting added to channels global array: %s \n", chan);
-         cout << "Channel is gettting added to glob array";
+         cout << "Channel is gettting added to glob array\n";
 	 channels.push_back(chan);
     }
     //add new channel to back
@@ -271,9 +291,6 @@ int readRequestType(struct request *r, int b)
             return -1;
         } 
     }
-
-    
-
     switch(netHost) {
 	//printf("the value isss: %s \n", ntohl(r->req_type));
         case REQ_LOGIN:
