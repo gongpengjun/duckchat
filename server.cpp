@@ -195,10 +195,19 @@ int loginReq(struct request_login *rl)
     //     cout << "HAYO ADDRESS: " << adr << " \n";
     //     userToAddr.erase(username);
     // }
-    map<string, string>::iterator git = userToAddr.find(username);
-    if(git != userToAddr.end()) {
+    hit = userToAddr.find(username);
+    if(hit != userToAddr.end()) {
         userToAddr.erase(username);
     }
+    hit = usrLisChan.find(username);
+    if(hit != usrLisChan.end()) {
+        usrLisChan.erase(username);
+    }
+    hit = usrTlkChan.find(username);
+    if(hit != usrTlkChan.end()) {
+        usrTlkChan.erase(username);
+    }
+
     cout << "username in login req: " << username << "\n";
     cout << "address in login req: " << realAddrString << "\n";
     addrToUser[realAddrString] = username;
@@ -269,6 +278,9 @@ int joinReq(struct request_join *rj)
     //add vectors back to map, new channel at the back.
     usrLisChan[user] = chanList;
     usrTlkChan[user] = chanTlk;
+    chanList.clear();
+    chanTlk.clear();
+    userList.clear();
     return 0;
 }
 //handle login requests
