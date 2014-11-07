@@ -234,7 +234,7 @@ int joinReq(struct request_join *rj)
     vector<string> userList = chanTlkUser[chan];
     //new channel case
     for(int j=0; j<channels.size(); j++) {
-        if(channelsn[j] == chan) {
+        if(channels[j] == chan) {
             cout << "channel exists\n";
             trig = 1;
         }
