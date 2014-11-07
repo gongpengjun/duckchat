@@ -207,6 +207,18 @@ int loginReq(struct request_login *rl)
     if(git != usrTlkChan.end()) {
         usrTlkChan.erase(username);
     }
+    //
+    for(int i=0; i<channels.size(); i++) {
+        vector<string> uOnC = chanTlkUser[channels[i]];
+        if(!uOnC.empty()) {
+            for(int j=0; j<uOnC.size(); j++) {
+                if(username == uOnC[j]) {
+                    uOnC.erase(uOnC.begin()+j);
+                }
+            }
+        }
+        chanTlkUser[channels[i]] = uOnC;
+    }
 
     cout << "username in login req: " << username << "\n";
     cout << "address in login req: " << realAddrString << "\n";
