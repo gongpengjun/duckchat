@@ -49,6 +49,32 @@ int main(int argc, char **argv)
     connectToSocket(argv[1], argv[2]);
     while(1)
     {
+        //print stuff
+            map<string,string>::iterator it;
+            if(!addrToUser.empty()) {
+                cout << "SIZE OF AtoU: " << addrToUser.size() << "\n";
+                for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
+                            cout << it->first << " is the address.\n";
+                            cout << it->second << " is the user.\n";
+                }  
+            }
+            map<string,string>::iterator its;
+            if(!userToAddr.empty()) {
+                cout << "SIZE OF UtoA: " << userToAddr.size() << "\n";
+                for(its = userToAddr.begin(); its != userToAddr.end(); its++) {
+                    cout << its->first << " is the user.\n";
+                    cout << its->second << " is the addrr.\n";
+                }
+            } 
+            for(int i=0; i<channels.size(); i++) {
+                vector<string> uOnC = chanTlkUser[channels[i]];
+                if(!uOnC.empty()) {
+                    for(int j=0; j<uOnC.size(); j++) {
+                        cout << uOnC[j] << " is user on channel: " << channels[i] << " from chanTlkUser.\n";
+                    }
+                }
+                chanTlkUser[channels[i]] = uOnC;
+            }   
         //for multiple requests maybe
         // requests = (struct request*) malloc(sizeof (struct request) + BUFLEN); 
         char *buf = new char[BUFLEN];
