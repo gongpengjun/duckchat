@@ -165,6 +165,7 @@ int sayReq(struct request_say *rs)
         }
         free(msg);
     }
+    tmpU.clear();
     return 0;
 }
 //handle login requests
@@ -180,32 +181,22 @@ int loginReq(struct request_login *rl)
     //this is our readable address
     string realAddrString = addrString;
     free (addrString);
-    //look for username of readable address
-    // string user =  addrToUser[realAddrString];
-    // //if we have a copy of logins address erase it
-    // if(user != "") {
-    //     cout << "HAYO USER: " << user << " \n";
-    //     addrToUser.erase(realAddrString);
-    // } 
+    //look for address 
     map<string, string>::iterator hit = addrToUser.find(realAddrString);
     if(hit != addrToUser.end()) {
         addrToUser.erase(realAddrString);
     }
-    // string adr = userToAddr[username];
-    // //if there is username of same, erase
-    // if(adr != "") {
-    //     cout << "HAYO ADDRESS: " << adr << " \n";
-    //     userToAddr.erase(username);
-    // }
+    // look for use
     hit = userToAddr.find(username);
     if(hit != userToAddr.end()) {
         userToAddr.erase(username);
     }
-
+    // look for user in channel listen
     map<string, vector<string> >::iterator git = usrLisChan.find(username);
     if(git != usrLisChan.end()) {
         usrLisChan.erase(username);
     }
+    //look for user in channel talk
     git = usrTlkChan.find(username);
     if(git != usrTlkChan.end()) {
         usrTlkChan.erase(username);
@@ -229,17 +220,31 @@ int logoutReq(struct request_logout *rl)
     //have tmp var
     string realAddrString = addrString;
     free (addrString);
-    string user;
+    string username;
     //get username 
-    user = addrToUser[realAddrString];
+    username = addrToUser[realAddrString];
     map<string,string>::iterator it;
-    //delete address and user in both maps
-    it = addrToUser.find(realAddrString);
-    addrToUser.erase(it);
-    //it.clear();
-    map<string,string>::iterator its;
-    its = userToAddr.find(user);
-    userToAddr.erase(its);
+    //delete address and user in both maps and both channe maps
+    //look for address
+    map<string, string>::iterator hit = addrToUser.find(realAddrString);
+    if(hit != addrToUser.end()) {
+        addrToUser.erase(realAddrString);
+    }
+    // look for use
+    hit = userToAddr.find(username);
+    if(hit != userToAddr.end()) {
+        userToAddr.erase(username);
+    }
+    // look for user in channel listen
+    map<string, vector<string> >::iterator git = usrLisChan.find(username);
+    if(git != usrLisChan.end()) {
+        usrLisChan.erase(username);
+    }
+    //look for user in channel talk
+    git = usrTlkChan.find(username);
+    if(git != usrTlkChan.end()) {
+        usrTlkChan.erase(username);
+    }
     //delete user and channel stuff
     //it = usrLisChan.find(user);
     //usrLisChan.erase(it);
