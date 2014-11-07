@@ -179,16 +179,24 @@ int loginReq(struct request_login *rl)
     string realAddrString = addrString;
     free (addrString);
     //look for username of readable address
-    string user =  addrToUser[realAddrString];
-    //if we have a copy of logins address erase it
-    if(user != "") {
-        cout << "HAYO USER: " << user << " \n";
+    // string user =  addrToUser[realAddrString];
+    // //if we have a copy of logins address erase it
+    // if(user != "") {
+    //     cout << "HAYO USER: " << user << " \n";
+    //     addrToUser.erase(realAddrString);
+    // } 
+    map<string, string>::iterator hit = addrToUser.find(realAddrString);
+    if(hit != addrToUser.end()) {
         addrToUser.erase(realAddrString);
-    } 
-    string adr = userToAddr[username];
-    //if there is username of same, erase
-    if(adr != "") {
-        cout << "HAYO ADDRESS: " << adr << " \n";
+    }
+    // string adr = userToAddr[username];
+    // //if there is username of same, erase
+    // if(adr != "") {
+    //     cout << "HAYO ADDRESS: " << adr << " \n";
+    //     userToAddr.erase(username);
+    // }
+    map<string, string>::iterator git = userToAddr.find(username);
+    if(git != userToAddr.end()) {
         userToAddr.erase(username);
     }
     cout << "username in login req: " << username << "\n";
