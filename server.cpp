@@ -58,23 +58,22 @@ int main(int argc, char **argv)
         if(bal > 0) {
             printf("recv()'d %d bytes of data in buf\n", bal);
             requests = (request*) buf;
-            int valid = readRequestType(requests, bal);  
-            if(valid == 0) {
-                map<string,string>::iterator it;
-                if(!addrToUser.empty()) {
-                    for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
-                                cout << it->first << " that is the address.\n";
-                                cout << it->second << " that is the user.\n";
-                        }  
+            readRequestType(requests, bal);  
+            
+	    map<string,string>::iterator it;
+            if(!addrToUser.empty()) {
+		for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
+                    cout << it->first << " is the address.\n";
+                    cout << it->second << " is the user.\n";
+                }  
+	    }
+            map<string,string>::iterator its;
+	    if(!userToAddr.empty()) {
+                for(its = userToAddr.begin(); its != userToAddr.end(); its++) {
+                    cout << its->first << " is the user.\n";
+                    cout << its->second << " is the addrr.\n";
                 }
-                // map<string,string>::iterator its;
-                // if(!userToAddr.empty()) {
-                //     for(its = userToAddr.begin(); its != userToAddr.end(); its++) {
-                //         cout << its->first << " that is the user.\n";
-                //         cout << its->second << " that is the address.\n";
-                //     }
-                // }
-            }    	        
+	    }    
         } 
        requests = NULL;
        delete[] buf;   
@@ -134,15 +133,13 @@ int sayReq(struct request_say *rs)
     string username = getReqAddr();
     //get list of users on channel from usrLisChan
     vector<string> tmpU = usrLisChan[username];
-
     //for all users on the channel
         //write the message to those users by there address
     for(int i=0; i<tmpU.size(); i++) {
         cout << "user: " << username << " on channel: " << tmpU[i] << "\n";
         //get address of current user
         struct sockaddr* address = (struct sockaddr*)&recAddr;
-        string tmpora = tmpU[i];
-        string ad = userToAddr[tmpora];
+        string ad = userToAddr[tmpU[i]];
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
         //move ad to t (address)
         strncpy(s, ad.c_str(), strlen(ad.c_str()));
