@@ -143,9 +143,10 @@ int sayReq(struct request_say *rs)
         //get address of current user
         struct sockaddr* address = (struct sockaddr*)&recAddr;
         string ad = userToAddr[tmpU[i]];
+        string bad = ad;
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
         //move ad to t (address)
-        strncpy(s, ad.c_str(), strlen(ad.c_str()));
+        strncpy(s, bad.c_str(), strlen(bad.c_str()));
         //from s to address and format
         inet_pton(AF_INET, s, &address);
         //setup message to send
