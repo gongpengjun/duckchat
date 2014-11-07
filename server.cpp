@@ -59,23 +59,23 @@ int main(int argc, char **argv)
             printf("recv()'d %d bytes of data in buf\n", bal);
             requests = (request*) buf;
             readRequestType(requests, bal);  
-            
-	    map<string,string>::iterator it;
+            //print stuff
+	        map<string,string>::iterator it;
             if(!addrToUser.empty()) {
                 cout << "SIZE OF AtoU: " << addrToUser.size() << "\n";
-		for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
-                    cout << it->first << " is the address.\n";
-                    cout << it->second << " is the user.\n";
+        		for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
+                            cout << it->first << " is the address.\n";
+                            cout << it->second << " is the user.\n";
                 }  
-	    }
+        	}
             map<string,string>::iterator its;
-	    if(!userToAddr.empty()) {
-            cout << "SIZE OF UtoA: " << userToAddr.size() << "\n";
+    	    if(!userToAddr.empty()) {
+                cout << "SIZE OF UtoA: " << userToAddr.size() << "\n";
                 for(its = userToAddr.begin(); its != userToAddr.end(); its++) {
                     cout << its->first << " is the user.\n";
                     cout << its->second << " is the addrr.\n";
                 }
-	    }    
+    	    }    
         } 
        requests = NULL;
        delete[] buf;   
@@ -89,7 +89,7 @@ string getReqAddr()
     struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
     char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
     //make address string
-    inet_ntop(AF_INET, &address, addrString, BUFLEN);
+    inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
     //have tmp var
     string realAddrString = addrString;
     free (addrString);
@@ -104,7 +104,7 @@ int checkValidAddr(struct request *r)
     struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
     char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
     //make address string
-    inet_ntop(AF_INET, &address, addrString, BUFLEN);
+    inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
     //have tmp var
     string realAddrString = addrString;
     free (addrString);
@@ -183,7 +183,7 @@ int loginReq(struct request_login *rl)
     string username = rl->req_username;
     char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
     //make address string
-    inet_ntop(AF_INET, &address, addrString, BUFLEN);
+    inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
     //this is our readable address
     string realAddrString = addrString;
     free (addrString);
@@ -234,7 +234,7 @@ int logoutReq(struct request_logout *rl)
     struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
     char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
     //make address string
-    inet_ntop(AF_INET, &address, addrString, BUFLEN);
+    inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
     //have tmp var
     string realAddrString = addrString;
     free (addrString);
