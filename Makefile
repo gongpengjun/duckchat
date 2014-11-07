@@ -6,8 +6,8 @@ all: server client
 server: server.cpp
 	$(PP) -o server server.cpp
 
-client: client.c
-	$(CC) -o client client.c
+client: client.cpp
+	$(PP) -o client client.cpp
 
 clean:
 	rm server client
