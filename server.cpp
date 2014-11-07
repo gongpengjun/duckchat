@@ -128,9 +128,9 @@ int sayReq(struct request_say *rs)
     /*
     get username of request
     get channel of request*/
-    string username = rs->req_username;
     string channel = rs->req_channel;
     string message = rs->req_text;
+    string username = getReqAddr();
     //get list of users on channel from usrLisChan
     vector<string> tmpU = usrLisChan[username];
     //for all users on the channel
@@ -141,17 +141,19 @@ int sayReq(struct request_say *rs)
         struct sockaddr* address = (struct sockaddr*)&recAddr;
         string ad = userToAddr[tmpU[i]];
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
-        //from ad to t
+        //move ad to t (address)
         strncpy(s, ad.c_str(), strlen(ad.c_str()));
-        //from s to address
+        //from s to address and format
         inet_pton(AF_INET, s, &address);
         //setup message to send
         struct text_say *msg= (struct text_say*) malloc(sizeof(struct text_say));
+        //set message type
         msg->txt_type= htonl(TXT_SAY);
+        //add username (from) and message 
         strncpy(msg->txt_username, username.c_str(), strlen(username.c_str()));
         strncpy(msg->txt_text, message.c_str(), strlen(message.c_str()));
         //send message
-	int size = sizeof(struct sockaddr_in);
+	    int size = sizeof(struct sockaddr_in);
         int res= sendto(sockfd, msg, sizeof(struct text_say), 0, address, size);
         if (res == -1) {
             cout << "sendto very badd \n";
