@@ -59,7 +59,7 @@ int main(int argc, char **argv)
             printf("recv()'d %d bytes of data in buf\n", bal);
             requests = (request*) buf;
             readRequestType(requests, bal);  
-            /*
+            
 	    map<string,string>::iterator it;
             if(!addrToUser.empty()) {
 		for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
@@ -73,7 +73,7 @@ int main(int argc, char **argv)
                     cout << its->first << " that is key.\n";
                     cout << its->second << " that is value.\n";
                 }
-	    } */   
+	    }    
         } 
        requests = NULL;
        delete[] buf;   
