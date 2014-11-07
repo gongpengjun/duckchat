@@ -30,7 +30,7 @@ struct addrinfo *addrAr;
 map<string, string> addrToUser;
 map<string, string> userToAddr;
 map<string,vector<string> > usrLisChan;
-map<string,string> usrTlkChan;
+map<string,vector<string> > usrTlkChan;
 map<string,vector<string> > chanTlkUser;
 vector<string> channels;
 //methods
@@ -131,6 +131,7 @@ int sayReq(struct request_say *rs)
     string channel = rs->req_channel;
     string message = rs->req_text;
     string username = getReqAddr();
+    cout << "this is username in sayReq " << username << "\n";
     //get list of users on channel from usrLisChan
     vector<string> tmpU = usrLisChan[username];
     //for all users on the channel
@@ -180,9 +181,6 @@ int loginReq(struct request_login *rl)
     string aTmp =  addrToUser[realAddrString];
     if(aTmp != "") {
         addrToUser.erase(aTmp);
-        cout << "new User\n";
-	    addrToUser[realAddrString] = username;
-        userToAddr[username] = realAddrString;
     } 
     cout << "username in login req: " << username << "\n";
     cout << "address in login req: " << realAddrString << "\n";
@@ -225,45 +223,35 @@ int joinReq(struct request_join *rj)
 {
     //create tmp vars for usename and channel of request
     string chan = (string)rj->req_channel;
+
     string user = getReqAddr();
     int trig = 0;
     //tmp vector for channel user is listening to
-    vector<string> vTmpL = usrLisChan[user];
+    vector<string> chanList = usrLisChan[user];
     //tmp string for channel user is talking to
-    string sTmpT = usrTlkChan[user];
+    vector<string> chanTlk = usrTlkChan[user];
     //tmp vec for users on channel
-    vector<string> vTmpU = chanTlkUser[chan];
+    vector<string> userList = chanTlkUser[chan];
     //new channel case
-    for(int j=0; j<vTmpU.size(); j++) {
-        if(vTmpU[j] == user) {
-            cout << "user in channel already\n";
+    for(int j=0; j<channels.size(); j++) {
+        if(channelsn[j] == chan) {
+            cout << "channel exists\n";
             trig = 1;
         }
     }
     if(trig == 0) {
-        //add user to channel in map
-        cout << "user gets added to channel map\n";
-        vTmpU.push_back(user);
-    }
-    trig = 0;
-    for(int i=0; i<channels.size(); i++) {
-        if(channels[i] == chan) {
-            trig = 1;
-        }
+        //NEW CHANNEL....add channel to vector
+        cout << "add channel to vector\n";
+        channels.push_back(chan);
 
     }
-    if(trig == 0) {
-        //add new channel
-       // printf("Channel is getting added to channels global array: %s \n", chan);
-         cout << "Channel is gettting added to glob array\n";
-	 channels.push_back(chan);
-    }
     //add new channel to back
-    vTmpL.push_back(chan);
-    sTmpT = chan;
+    chanList.push_back(chan);
+    //add channel to most recent channel to back
+    chanTlk.push_back(chan);
     //add vectors back to map, new channel at the back.
-    usrLisChan[user] = vTmpL;
-    usrTlkChan[user] = sTmpT;
+    usrLisChan[user] = chanList;
+    usrTlkChan[user] = chanTlk;
     return 0;
 }
 //handle login requests
