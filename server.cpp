@@ -137,7 +137,7 @@ int sayReq(struct request_say *rs)
     //get list of users on channel from usrLisChan
     //vector<string> tmpU = usrLisChan[username];
     map<string,vector<string> >::iterator hit = chanTlkUser.find(channel);
-    if(hit == userToAddr.end()) {
+    if(hit == chanTlkUser.end()) {
         cout << "HOLD not here : " << channel <<"\n";  
         return -1; 
     }
