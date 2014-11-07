@@ -62,6 +62,7 @@ int main(int argc, char **argv)
             
 	    map<string,string>::iterator it;
             if(!addrToUser.empty()) {
+                cout << "SIZE OF AtoU: " << addrToUser.size() << "\n";
 		for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
                     cout << it->first << " is the address.\n";
                     cout << it->second << " is the user.\n";
@@ -69,6 +70,7 @@ int main(int argc, char **argv)
 	    }
             map<string,string>::iterator its;
 	    if(!userToAddr.empty()) {
+            cout << "SIZE OF UtoA: " << userToAddr.size() << "\n";
                 for(its = userToAddr.begin(); its != userToAddr.end(); its++) {
                     cout << its->first << " is the user.\n";
                     cout << its->second << " is the addrr.\n";
