@@ -135,19 +135,20 @@ int sayReq(struct request_say *rs)
     string username = getReqAddr();
     cout << "this is username in sayReq " << username << "\n";
     //get list of users on channel from usrLisChan
-    vector<string> tmpU = usrLisChan[username];
+    //vector<string> tmpU = usrLisChan[username];
+    map<string,vector<string> >::iterator hit = chanTlkUser.find(channel);
+    if(hit == userToAddr.end()) {
+        cout << "HOLD not here : " << channel <<"\n";  
+        return -1; 
+    }
+    vector<string> tmpU = hit->second;
     //for all users on the channel
         //write the message to those users by there address
     for(int i=0; i<tmpU.size(); i++) {
         cout << "user: " << username << " on channel: " << tmpU[i] << "\n";
         //get address of current user
         struct sockaddr* address;
-        string ad;
-        map<string, string>::iterator hit = userToAddr.find(tmpU[i]);
-        if(hit == userToAddr.end()) {
-            cout << "HOLD not here : " << tmpU[i] <<"\n";   
-        }
-        ad = hit->second;
+        string ad = userToAddr[tmpU[i]];
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
         //move ad to t (address)
         strncpy(s, ad.c_str(), strlen(ad.c_str()));
