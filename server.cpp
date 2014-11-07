@@ -157,7 +157,7 @@ int sayReq(struct request_say *rs)
         //setup message to send
         struct text_say *msg= (struct text_say*) malloc(sizeof(struct text_say));
         //set message type
-        msg->txt_type= htonl(TXT_SAY);
+        msg->txt_type = htonl(TXT_SAY);
         //add username (from) and message 
         strncpy(msg->txt_username, username.c_str(), USERNAME_MAX);
         strncpy(msg->txt_text, message.c_str(), SAY_MAX);
