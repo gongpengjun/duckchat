@@ -67,13 +67,13 @@ int main(int argc, char **argv)
                                 cout << it->second << " that is the user.\n";
                         }  
                 }
-                map<string,string>::iterator its;
-                if(!userToAddr.empty()) {
-                    for(its = userToAddr.begin(); its != userToAddr.end(); its++) {
-                        cout << its->first << " that is the user.\n";
-                        cout << its->second << " that is the address.\n";
-                    }
-                }
+                // map<string,string>::iterator its;
+                // if(!userToAddr.empty()) {
+                //     for(its = userToAddr.begin(); its != userToAddr.end(); its++) {
+                //         cout << its->first << " that is the user.\n";
+                //         cout << its->second << " that is the address.\n";
+                //     }
+                // }
             }    	        
         } 
        requests = NULL;
