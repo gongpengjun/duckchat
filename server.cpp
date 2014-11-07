@@ -148,8 +148,8 @@ int sayReq(struct text_say *rs)
         //setup message to send
         struct text_say *msg= (struct text_say*) malloc(sizeof(struct text_say));
         msg->txt_type= htonl(TXT_SAY);
-        msg->txt_username = (char*)tmpU[i];
-        msg->txt_text = (char*)message;
+        strncpy(msg->txt_username, username);
+        strncpy(msg->txt_text, message);
         //send message
         int res= sendto(sockfd, msg, sizeof(struct text_say), 0, address, sizeof(struct sockaddr_in));
         if (res == -1) {
