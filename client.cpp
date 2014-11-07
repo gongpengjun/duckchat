@@ -34,10 +34,10 @@ void err(char*);//error function*/
 struct addrinfo *addrAr;
 int sockfd;
 using namespace std;
-int main(int argc, char** argv)
+int main(int argc, char* argv[])
 {
     //initialize vars
-	char buf[BUFLEN];
+    char buf[BUFLEN];
     addrAr = NULL;
     sockfd = 0;
     //error checking correct run input
@@ -49,10 +49,10 @@ int main(int argc, char** argv)
     //call to connect socket and call to send login request to server
     connectToSocket(argv[1], argv[2]);
     logUserIn(argv[3]);
-	printf("argv 1: %s argv 2: %s argv 3: %s\n", argv[1], argv[2], argv[3]);
+    printf("argv 1: %s argv 2: %s argv 3: %s\n", argv[1], argv[2], argv[3]);
 	//FD_SET(sockfd, &readfds);//add our socket to our set of files to read from
 
-    struct text response;//for testing
+    struct text* response;//for testing
 
     while(1)
     {
@@ -85,8 +85,8 @@ int main(int argc, char** argv)
         if(bal = recvfrom(sockfd, buf, BUFLEN, 0,(struct sockaddr*)&addrAr->ai_addr, &addrAr->ai_addrlen) > 0)//if we recieve somthing, print it.
         {
             printf("recv()'d %d bytes of data in buf\n", bal);
-            response = (response*) buf;
-            readMessageType(&response, bal);
+            response = (text*) buf;
+            readMessageType(response, bal);
 
         }
     }
