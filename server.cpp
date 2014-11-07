@@ -187,27 +187,27 @@ int loginReq(struct request_login *rl)
     //this is our readable address
     string realAddrString = addrString;
     free (addrString);
-    //look for address 
+    //look for address in addrToUser
     map<string, string>::iterator hit = addrToUser.find(realAddrString);
     if(hit != addrToUser.end()) {
         addrToUser.erase(realAddrString);
     }
-    // look for use
+    // look for use in userToAddr
     hit = userToAddr.find(username);
     if(hit != userToAddr.end()) {
         userToAddr.erase(username);
     }
-    // look for user in channel listen
+    // look for users in channel listen usrLisChan
     map<string, vector<string> >::iterator git = usrLisChan.find(username);
     if(git != usrLisChan.end()) {
         usrLisChan.erase(username);
     }
-    //look for user in channel talk
+    //look for users in channel talk usrTlkChan
     git = usrTlkChan.find(username);
     if(git != usrTlkChan.end()) {
         usrTlkChan.erase(username);
     }
-    //
+    //for all channels, if there is a user in the channels talk user list chanTlkUser[i] then erase the user from the chanTlkUser and add it back to channels talk user list chanTlkUser[i]
     for(int i=0; i<channels.size(); i++) {
         vector<string> uOnC = chanTlkUser[channels[i]];
         if(!uOnC.empty()) {
