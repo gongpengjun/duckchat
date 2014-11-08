@@ -205,7 +205,7 @@ int sayReq(struct request_say *rs)
     for(int i=0; i<tmpU.size(); i++) {
         cout << "user: " << tmpU[i] << " on channel: " << channel << "\n";
         //get address of current user
-        struct sockaddr_in6* address;
+        /*struct sockaddr_in6* address;
         multimap<string, pair<string,string> >::iterator ui = userToAddr.find(tmpU[i]);
         pair<string,string> ad = ui->second;
         cout << "this is address in loop of say " << ad.first << " and " << ad.second << "\n";
@@ -217,7 +217,7 @@ int sayReq(struct request_say *rs)
         inet_pton(AF_INET, s, &(address->sin6_addr));
         
         multimap<string,int>::iterator addrToPit = addrToPort.find(ad.first);
-        cout << "port as is: " << addrToPit->second << " \n";
+        cout << "port as is: " << addrToPit->second << " \n";*/
         /*struct sockaddr_in* addrSEND = (struct sockaddr_in*)address;
         
         addrSEND->sin_port = addrToPit->second;
@@ -230,7 +230,7 @@ int sayReq(struct request_say *rs)
         //strncpy(p, ad.second.c_str(), strlen(ad.second.c_str()));
         //inet_pton(AF_INET, p, &realAddr);
         //setup message to send
-        struct text_say *msg= (struct text_say*) malloc(sizeof(struct text_say));
+        /*struct text_say *msg= (struct text_say*) malloc(sizeof(struct text_say));
         //set message type
         msg->txt_type = htonl(TXT_SAY);
         //add username (from) and message 
@@ -239,7 +239,30 @@ int sayReq(struct request_say *rs)
         strncpy(msg->txt_channel, channel.c_str(), CHANNEL_MAX);
         //send message
         int size = sizeof(struct sockaddr*);
-        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, (struct sockaddr*)address, size);
+        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, (struct sockaddr*)address, size);*/
+        struct sockaddr* address;
+        
+        //map<string, string>::iterator hit = userToAddr.find(tmpU[i]);
+        //string ad = hit->second;
+        multimap<string, pair<string,string> >::iterator ui = userToAddr.find(tmpU[i]);
+        pair<string,string> tad = ui->second;
+        string ad = tad.second;
+        char *s= (char*) malloc(sizeof(char)*BUFLEN);
+        //move ad to t (address)
+        strncpy(s, ad.c_str(), strlen(ad.c_str()));
+        //from s to address and format
+        inet_pton(AF_INET, s, &address);
+        //setup message to send
+        struct text_say *msg= (struct text_say*) malloc(sizeof(struct text_say));
+        //set message type
+        msg->txt_type= htonl(TXT_SAY);
+        //add username (from) and message 
+        strncpy(msg->txt_username, username.c_str(), USERNAME_MAX);
+        strncpy(msg->txt_text, message.c_str(), SAY_MAX);
+        strncpy(msg->txt_channel, channel.c_str(), CHANNEL_MAX);
+        //send message
+        int size = sizeof(struct sockaddr);
+        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, address, size);
         if (res == -1) {
             cout << "sendto very badd \n";
             return -1;
