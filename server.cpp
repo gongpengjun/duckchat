@@ -181,7 +181,8 @@ int sayReq(struct request_say *rs)
         cout << "user: " << tmpU[i] << " on channel: " << channel << "\n";
         //get address of current user
         struct sockaddr_in* address;
-        pair<string,string> ad = userToAddr[tmpU[i]];
+        multimap<string, pair<string,string> >::iterator i = userToAddr.find(tmpU[i]);
+        pair<string,string> ad = i->second;
         cout << "this is address in loop of say " << ad.first << " and " << ad.second << "\n";
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
         //move ad to t (address)
