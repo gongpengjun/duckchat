@@ -466,6 +466,7 @@ int whoReq(struct request_who *rw)
 
 int readRequestType(struct request *r, int b) 
 {
+    cout << "do I get herer??? \n";
     int fin = 0;
     int netHost = 0;
     netHost = ntohl(r->req_type);
