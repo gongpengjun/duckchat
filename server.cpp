@@ -44,7 +44,7 @@ int checkValidAddr();
 string getUserOfCurrAddr();
 string getAddr_string();
 string getSemiAddr_string();
-string getAddr_Port();
+int getAddr_Port();
 
 //program
 int main(int argc, char **argv)
@@ -132,7 +132,7 @@ string getAddr_string() {
     return realAddrString;
 }
 //returns string form of address
-string getAddr_Port() {
+int getAddr_Port() {
     //new request address info
     struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
     //char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
@@ -140,7 +140,7 @@ string getAddr_Port() {
     //inet_ntop(AF_INET, &(address->sin_port), addrString, BUFLEN);
     //have tmp var
     
-    string realAddrString = (string)address->sin_port;
+    int realAddrString = address->sin_port;
     //free (addrString);
     return realAddrString;
 }
@@ -235,7 +235,7 @@ int sayReq(struct request_say *rs)
 //handle login requests
 int loginReq(struct request_login *rl)
 {
-    string poort = getAddr_Port();
+    int poort = getAddr_Port();
     cout << "this should be PORT " << poort << " \n";
     int prt = (int)poort;
     cout << "this spot 1 \n";
