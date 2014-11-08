@@ -408,18 +408,18 @@ int logoutReq(struct request_logout *rl)
     string username = getUserOfCurrAddr();
 
     //pair<string,string> realAddrString (getAddr_string(),getSemiAddr_string());
-    // multimap<pair<string,string>, string>::iterator i;
-    // for(i=addrToUser.begin(); i<addrToUser.end(); i++) {
-    //     if(i->second == username) {
-    //         addrToUser.erase(i);
-    //     }
-    // }
-    // multimap<string, pair<string,string> >::iterator ii;
-    // for(ii=userToAddr.begin(); ii<userToAddr.end(); ii++) {
-    //     if(ii->first == username) {
-    //         userToAddr.erase(i);
-    //     }
-    // }
+    multimap<pair<string,string>, string>::iterator i;
+    for(i=addrToUser.begin(); i<addrToUser.end(); i++) {
+        if(i->second == username) {
+            addrToUser.erase(i);
+        }
+    }
+    multimap<string, pair<string,string> >::iterator ii;
+    for(ii=userToAddr.begin(); ii<userToAddr.end(); ii++) {
+        if(ii->first == username) {
+            userToAddr.erase(ii);
+        }
+    }
     // look for user in channel listen
     map<string, vector<string> >::iterator git = usrLisChan.find(username);
     if(git != usrLisChan.end()) {
