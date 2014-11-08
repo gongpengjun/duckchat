@@ -331,13 +331,14 @@ int logoutReq(struct request_logout *rl)
     if(git != usrTlkChan.end()) {
         usrTlkChan.erase(username);
     }
-    //erase from chanTlkUser
+    //erase user on channels in chanTlkUser
     for(int i=0; i<channels.size(); i++) {
         map<string,vector<string> >::iterator it = chanTlkUser.find(channels[i]);
         vector<string> usersC = it->second;
-        vector<string>::iterator vt = usersC.find(username);
-        if(vt != usersC.end()) {
-            usersC.erase(vt);
+        for(int j=0; j<usersC.size(); j++) {
+            if(usersC[j] == username) {
+                usersC.erase(usersC.begin()+j);
+            }
         }
     }
     //delete user and channel stuff
