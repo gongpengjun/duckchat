@@ -28,8 +28,8 @@ struct sockaddr recAddr;
 socklen_t fromlen = sizeof(recAddr);
 int sockfd;
 struct addrinfo *addrAr;
-map<pair<string,string>, string> addrToUser;
-map<string, pair<string,string> > userToAddr;
+multimap<pair<string,string>, string> addrToUser;
+multimap<string, pair<string,string> > userToAddr;
 map<string,vector<string> > usrLisChan;
 map<string,vector<string> > usrTlkChan;
 map<string,vector<string> > chanTlkUser;
@@ -231,6 +231,7 @@ int loginReq(struct request_login *rl)
     cout << "this spot 3 \n";
     addrToUser.insert(pair<pair<string,string>,string>(pair<string,string>(realAddrString,smiAddr), username));
     userToAddr.insert(pair<string,pair<string,string> >(username, pair<string,string>(realAddrString,smiAddr)));
+    //printing
     map<pair<string,string>,string>::iterator mit;
     if(!addrToUser.empty()) {
         cout << "SIZE OF AtoU: " << addrToUser.size() << "\n";
