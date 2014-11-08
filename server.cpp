@@ -123,13 +123,14 @@ int main(int argc, char **argv)
 //returns string of username of current request address
 string getUserOfCurrAddr()
 { 
-    string realAddrString = getAddr_string();
+    pair<string,string> realAddrString (getAddr_string(),getSemiAddr_string());
     string aTmp = addrToUser[realAddrString];
     if(aTmp == "") {
         return "empty";
     }
     return aTmp;
 }
+//return semi address
 string getSemiAddr_string()
 {
     struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
