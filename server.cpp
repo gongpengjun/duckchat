@@ -431,15 +431,15 @@ int logoutReq(struct request_logout *rl)
         usrTlkChan.erase(username);
     }
     //erase user on channels in chanTlkUser
-    for(int i=0; i<channels.size(); i++) {
-        map<string,vector<string> >::iterator it = chanTlkUser.find(channels[i]);
-        vector<string> usersC = it->second;
-        for(int j=0; j<usersC.size(); j++) {
-            if(usersC[j] == username) {
-                usersC.erase(usersC.begin()+j);
-            }
-        }
-    }
+    // for(int i=0; i<channels.size(); i++) {
+    //     map<string,vector<string> >::iterator it = chanTlkUser.find(channels[i]);
+    //     vector<string> usersC = it->second;
+    //     for(int j=0; j<usersC.size(); j++) {
+    //         if(usersC[j] == username) {
+    //             usersC.erase(usersC.begin()+j);
+    //         }
+    //     }
+    // }
     // it = usrLisChan.find(user);
     // usrLisChan.erase(it);
     // it = usrTlkChan.find(user);
