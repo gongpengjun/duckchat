@@ -324,6 +324,7 @@ int loginReq(struct request_login *rl)
     if(it == chanTlkUser.end()) {
         //cout << "this spot 6 \n";
         chanTlkUser.insert(pair<string,vector<string> >("Common", usersC));
+        channels.push_back("Common");
         //cout << "this spot 7 \n";
     }
     //cout << "this spot 8 \n";
