@@ -40,6 +40,7 @@ int readRequestType(struct request*, int);
 int sayReq(struct request_say*);
 int checkValidAddr();
 string getReqAddr();
+string getAddrString(); 
 
 //program
 int main(int argc, char **argv)
@@ -132,21 +133,26 @@ string getReqAddr()
     return aTmp;
 
 }
-//check if current request address is valid or exist in map
-int checkValidAddr(struct request *r) 
+string getAddrString() 
 {
-    //new request address info
     struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
     char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
     //make address string
     inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
     //have tmp var
-
     string realAddrString = addrString;
-    cout << realAddrString << "Jack look\n"; 
     free (addrString);
+    return realAddrString;
+}
+//check if current request address is valid or exist in map
+int checkValidAddr(struct request *r) 
+{
+    //new request address info
+    string realAddrString = getAddrString();
+    cout << realAddrString << " : Jack look at this ADDRESSS\n"; 
     //look in map for address
     //string aTmp = addrToUser[realAddrString];
+    //prints stuff
     map<string,string>::iterator it;
     if(!addrToUser.empty()) {
         cout << "SIZE OF AtoU: " << addrToUser.size() << "\n";
@@ -158,7 +164,8 @@ int checkValidAddr(struct request *r)
     it = addrToUser.find(realAddrString);
     if(it == addrToUser.end()) {
         cout << "super baddd addressss mann\n";
-        cout << realAddrString << " that THING\n";
+        cout << it->first << " that THING\n";
+        cout << "holy moly " << it->second << "\n";
         return -1;
     } 
     return 0;
