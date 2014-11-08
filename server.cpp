@@ -52,69 +52,45 @@ int main(int argc, char **argv)
     connectToSocket(argv[1], argv[2]);
     while(1)
     {
-        //print stuff
-        // map<string,string>::iterator it;
-        // if(!addrToUser.empty()) {
-        //     cout << "SIZE OF AtoU: " << addrToUser.size() << "\n";
-        //     for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
-        //                 cout << it->first << " is the address.\n";
-        //                 cout << it->second << " is the user.\n";
-        //     }  
-        // }
-        // map<string,string>::iterator its;
-        // if(!userToAddr.empty()) {
-        //     cout << "SIZE OF UtoA: " << userToAddr.size() << "\n";
-        //     for(its = userToAddr.begin(); its != userToAddr.end(); its++) {
-        //         cout << its->first << " is the user.\n";
-        //         cout << its->second << " is the addrr.\n";
-        //     }
-        // } 
-        // for(int i=0; i<channels.size(); i++) {
-        //     vector<string> uOnC = chanTlkUser[channels[i]];
-        //     if(!uOnC.empty()) {
-        //         for(int j=0; j<uOnC.size(); j++) {
-        //             cout << uOnC[j] << " is user on channel: " << channels[i] << " from chanTlkUser.\n";
-        //         }
-        //     }
-        //     chanTlkUser[channels[i]] = uOnC;
-        // }   
         //for multiple requests maybe
         // requests = (struct request*) malloc(sizeof (struct request) + BUFLEN); 
         char *buf = new char[BUFLEN];
         struct request *requests = (struct request*)malloc(sizeof(struct request*) + BUFLEN);  
         int bal = 0;
-        bal = recvfrom(sockfd, requests, BUFLEN, 0, (struct sockaddr*)&recAddr, &fromlen);
+        bal = recvfrom(sockfd, buf, BUFLEN, 0, (struct sockaddr*)&recAddr, &fromlen);
         if(bal > 0) {
             printf("recv()'d %d bytes of data in buf\n", bal);
-            //requests = (request*) buf;
+            requests = (request*) buf;
             cout << "do I get herer??? \n";
             readRequestType(requests, bal);  
             //print stuff
-            // map<string,string>::iterator it;
-            // if(!addrToUser.empty()) {
-            //     cout << "SIZE OF AtoU: " << addrToUser.size() << "\n";
-            //     for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
-            //                 cout << it->first << " is the address.\n";
-            //                 cout << it->second << " is the user.\n";
-            //     }  
-            // }
-            // map<string,string>::iterator its;
-            // if(!userToAddr.empty()) {
-            //     cout << "SIZE OF UtoA: " << userToAddr.size() << "\n";
-            //     for(its = userToAddr.begin(); its != userToAddr.end(); its++) {
-            //         cout << its->first << " is the user.\n";
-            //         cout << its->second << " is the addrr.\n";
-            //     }
-            // } 
-            // for(int i=0; i<channels.size(); i++) {
-            //     vector<string> uOnC = chanTlkUser[channels[i]];
-            //     if(!uOnC.empty()) {
-            //         for(int j=0; j<uOnC.size(); j++) {
-            //             cout << uOnC[j] << " is user on channel: " << channels[i] << " from chanTlkUser.\n";
-            //         }
-            //     }
-            //     chanTlkUser[channels[i]] = uOnC;
-            // }   
+            map<pair<string,string>,string>::iterator it;
+            if(!addrToUser.empty()) {
+                cout << "SIZE OF AtoU: " << addrToUser.size() << "\n";
+                for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
+                            cout << it->first.first << " is the complex address.\n";
+                            cout << it->first.second << " is the simple address.\n";
+                            cout << it->second << " is the user.\n";
+                }  
+            }
+            map<string,pair<string,string> >::iterator its;
+            if(!userToAddr.empty()) {
+                cout << "SIZE OF UtoA: " << userToAddr.size() << "\n";
+                for(its = userToAddr.begin(); its != userToAddr.end(); its++) {
+                    cout << its->first << " is the user.\n";
+                    cout << its->second.first << " is the complex addrr.\n";
+                    cout << its->second.second << " is the simple addrr.\n";
+                }
+            } 
+            for(int i=0; i<channels.size(); i++) {
+                vector<string> uOnC = chanTlkUser[channels[i]];
+                if(!uOnC.empty()) {
+                    for(int j=0; j<uOnC.size(); j++) {
+                        cout << uOnC[j] << " is user on channel: " << channels[i] << " from chanTlkUser.\n";
+                    }
+                }
+                chanTlkUser[channels[i]] = uOnC;
+            }   
         } 
        //requests = NULL;
        delete[] buf;   
