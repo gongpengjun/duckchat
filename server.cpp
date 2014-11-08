@@ -422,7 +422,7 @@ int logoutReq(struct request_logout *rl)
         }
     }
     multimap<string, int>::iterator imm = addrToPort.find(tmpaddr);
-    if(imm != addrToPort.end) {
+    if(imm != addrToPort.end()) {
         addrToPort.erase(imm);
     }
 
