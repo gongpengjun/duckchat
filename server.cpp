@@ -101,10 +101,8 @@ int main(int argc, char **argv)
 string getUserOfCurrAddr()
 { 
     pair<string,string> realAddrString (getAddr_string(),getSemiAddr_string());
-    string aTmp = addrToUser[realAddrString];
-    if(aTmp == "") {
-        return "empty";
-    }
+    multimap::iterator i = addrToUser.find(realAddrString);
+    string aTmp = i->second;
     return aTmp;
 }
 //return semi address
