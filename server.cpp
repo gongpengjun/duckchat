@@ -289,7 +289,7 @@ int loginReq(struct request_login *rl)
     //cout << "this spot 2 \n";
     //username
     string username = rl->req_username;
-    //cout << "this is the real addr string in login: " << realAddrString << "\n";
+    
 
     //cout << "username in login req: " << username << "\n";
     //cout << "address in login req: " << realAddrString << "\n";
@@ -522,6 +522,40 @@ int leaveReq(struct request_leave *rl)
 //handle login requests
 int listReq(struct request_list *rl)
 {
+    struct sockaddr* address;
+        
+    //map<string, string>::iterator hit = userToAddr.find(tmpU[i]);
+    //string ad = hit->second;
+    multimap<string, pair<string,string> >::iterator ui = userToAddr.find(getUserOfCurrAddr());
+    pair<string,string> tad = ui->second;
+    string ad = tad.second;
+    //cout << tad.second << " LISTEN MANN\n";
+    char *s= (char*) malloc(sizeof(char)*BUFLEN);
+    multimap<string,int>::iterator addrToPit = addrToPort.find(tad.first);
+    cout << "portPARIS as is: " << addrToPit->second << " \n";
+    //move ad to t (address)
+    strncpy(s, ad.c_str(), strlen(ad.c_str()));
+    //from s to address and format
+    inet_pton(AF_INET, s, &address);
+    //setup message to send
+    struct text_list *msg= (struct text_list*) malloc(sizeof(struct text_list) + channels.size()*sizeof(struct channel_info));
+    //set message type
+    msg->txt_type= htonl(TXT_LIST);
+    //add username (from) and message 
+    msg->txt_nchannels = htonl(channels.size());
+    for (int i = 0; i < channels.size(); i++) {
+        strncpy(msg->txt_channels[i].ch_channel, channels[i].c_str(), CHANNEL_MAX);
+    }
+    //strncpy(msg->txt_nchannels, txt_nchannels.c_str(), CHANNEL_MAX);
+    //strncpy(msg->channel_info, message.c_str(), SAY_MAX);
+    //send message
+    int size = sizeof(struct sockaddr);
+    int res= sendto(sockfd, msg, sizeof(struct text_say), 0, address, size);
+    if (res == -1) {
+        cout << "sendto very badd \n";
+        //return -1;
+    }
+    free(msg);
     return 0;
 }
 //handle login requests
