@@ -235,7 +235,7 @@ int sayReq(struct request_say *rs)
 int loginReq(struct request_login *rl)
 {
     int prt = getAddr_Port();
-    cout << "this should be PORT " << recAddr->sin_port << " \n";
+    cout << "this should be PORT " << recAddr.sin_port << " \n";
     cout << "this spot 1 \n";
     string realAddrString = getAddr_string();
     cout << "this spot 2 \n";
