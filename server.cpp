@@ -140,7 +140,7 @@ string getAddr_Port() {
     //inet_ntop(AF_INET, &(address->sin_port), addrString, BUFLEN);
     //have tmp var
     
-    string realAddrString = address.sin_port;
+    string realAddrString = (string)address->sin_port;
     //free (addrString);
     return realAddrString;
 }
