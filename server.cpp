@@ -412,17 +412,20 @@ int logoutReq(struct request_logout *rl)
     for(i=addrToUser.begin(); i!=addrToUser.end(); i++) {
         if(i->second == username) {
             tmpaddr = i->first.first;
+            cout << "deleting  1 \n";
             addrToUser.erase(i);
         }
     }
     multimap<string, pair<string,string> >::iterator ii;
     for(ii=userToAddr.begin(); ii!=userToAddr.end(); ii++) {
         if(ii->first == username) {
+            cout << "deleting  2 \n";
             userToAddr.erase(ii);
         }
     }
     multimap<string, int>::iterator imm = addrToPort.find(tmpaddr);
     if(imm != addrToPort.end()) {
+        cout << "deleting  3 \n";
         addrToPort.erase(imm);
     }
 
@@ -430,11 +433,13 @@ int logoutReq(struct request_logout *rl)
     // look for user in channel listen
     map<string, vector<string> >::iterator git = usrLisChan.find(username);
     if(git != usrLisChan.end()) {
+        cout << "deleting  4 \n";
         usrLisChan.erase(username);
     }
     //look for user in channel talk
     git = usrTlkChan.find(username);
     if(git != usrTlkChan.end()) {
+        cout << "deleting  5 \n";
         usrTlkChan.erase(username);
     }
     //erase user on channels in chanTlkUser
