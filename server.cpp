@@ -272,6 +272,14 @@ int loginReq(struct request_login *rl)
     // userToAddr.insert(pair<string, string>(username, realAddrString));
     addrToUser[realAddrString] = username;
     userToAddr[username] = realAddrString;
+    map<string,string>::iterator it = addrToUser.find(realAddrString);
+    if(it != addrToUser.end()) {
+        
+        cout << it->first << " that THING is in LoGIN " << it->second << " so is that\n";
+        //return -1;
+    } else {
+        cout << "super baddd addressss mann\n";
+    }
     return 0;
 }
 //handle login requests
