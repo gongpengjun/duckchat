@@ -136,12 +136,12 @@ string getReqAddr()
 string getAddrString() 
 {
     struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
-    char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
+    char *tmp = (char*)malloc(sizeof(char)*BUFLEN);
     //make address string
     inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
     //have tmp var
     string realAddrString = addrString;
-    free (addrString);
+    free (tmp);
     return realAddrString;
 }
 //check if current request address is valid or exist in map
