@@ -550,7 +550,7 @@ int listReq(struct request_list *rl)
     //strncpy(msg->channel_info, message.c_str(), SAY_MAX);
     //send message
     int size = sizeof(struct sockaddr);
-    int res= sendto(sockfd, msg, sizeof(struct text_say), 0, address, size);
+    int res= sendto(sockfd, msg, sizeof(struct text_list), 0, address, size);
     if (res == -1) {
         cout << "sendto very badd \n";
         //return -1;
