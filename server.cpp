@@ -406,11 +406,12 @@ int logoutReq(struct request_logout *rl)
     //have tmp var
     string realAddrString = getAddr_string();
     string username = getUserOfCurrAddr();
-
+    string tmpaddr;
     //pair<string,string> realAddrString (getAddr_string(),getSemiAddr_string());
     multimap<pair<string,string>, string>::iterator i;
     for(i=addrToUser.begin(); i!=addrToUser.end(); i++) {
         if(i->second == username) {
+            tmpaddr = i->first;
             addrToUser.erase(i);
         }
     }
@@ -420,6 +421,12 @@ int logoutReq(struct request_logout *rl)
             userToAddr.erase(ii);
         }
     }
+    multimap<string, int>::iterator imm = addrToPort.find(tmpaddr);
+    if(imm != addrToPort.end) {
+        addrToPort.erase(imm);
+    }
+
+    
     // look for user in channel listen
     map<string, vector<string> >::iterator git = usrLisChan.find(username);
     if(git != usrLisChan.end()) {
