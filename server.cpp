@@ -27,8 +27,8 @@ struct sockaddr recAddr;
 socklen_t fromlen = sizeof(recAddr);
 int sockfd;
 struct addrinfo *addrAr;
-map<string, string> addrToUser;
-map<string, string> userToAddr;
+map<pair<string,string>, string> addrToUser;
+map<string, pair<string,string> > userToAddr;
 map<string,vector<string> > usrLisChan;
 map<string,vector<string> > usrTlkChan;
 map<string,vector<string> > chanTlkUser;
@@ -41,6 +41,7 @@ int sayReq(struct request_say*);
 int checkValidAddr();
 string getUserOfCurrAddr();
 string getAddr_string();
+string getSemiAddr_string()
 
 //program
 int main(int argc, char **argv)
@@ -128,6 +129,17 @@ string getUserOfCurrAddr()
     }
     return aTmp;
 }
+string getSemiAddr_string()
+{
+    struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
+    char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
+    //make address string
+    inet_ntop(AF_INET, &address, addrString, BUFLEN);
+    //have tmp var
+    string realAddrString = addrString;
+    free (addrString);
+    return realAddrString;
+}
 //returns string form of address
 string getAddr_string() {
     //new request address info
@@ -150,10 +162,11 @@ int checkValidAddr(struct request *r)
     // inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
     // //have tmp var
     string realAddrString = getAddr_string();
+    string smiAddrString = getSemiAddr_string();
     //free (addrString);
     //look in map for address
     //string aTmp = addrToUser[realAddrString];
-    map<string,string>::iterator it = addrToUser.find(realAddrString);
+    map<pair<string,string>,string>::iterator it = addrToUser.find(pair<string,string>(realAddrString,smiAddrString));
     if(it == addrToUser.end()) {
         cout << "super baddd addressss mann\n";
         cout << realAddrString << " that THING\n";
@@ -230,8 +243,9 @@ int loginReq(struct request_login *rl)
     cout << "username in login req: " << username << "\n";
     cout << "address in login req: " << realAddrString << "\n";
     //add address and username to map
-    addrToUser.insert(pair<string, string>(realAddrString, username));
-    userToAddr.insert(pair<string, string>(username, realAddrString));
+    string smiAddr = getSemiAddr_string();
+    addrToUser.insert(pair<pair<string,string>, string>(pair<string,string>(realAddrString,smiAddr), username));
+    userToAddr.insert(pair<string, pair<pair<string,string> >(username, pair<string,string>(realAddrString,smiAddr)));
     //add user to common
     map<string,vector<string> >::iterator it = chanTlkUser.find("Common");
     vector<string> usersC;
