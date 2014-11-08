@@ -443,17 +443,19 @@ int logoutReq(struct request_logout *rl)
         usrTlkChan.erase(username);
     }
     //erase user on channels in chanTlkUser
-    for(int i=0; i<channels.size(); i++) {
-        map<string,vector<string> >::iterator it = chanTlkUser.find(channels[i]);
-        vector<string> usersC = it->second;
+    cout << "before fail   \n";
+    for(int ick=0; ick<channels.size(); ick++) {
+        cout << "in outerr \n";
+        map<string,vector<string> >::iterator itck = chanTlkUser.find(channels[ick]);
+        vector<string> usersC = itck->second;
         for(int j=0; j<usersC.size(); j++) {
             if(usersC[j] == username) {
                 cout << "deleting user: " << usersC[j] << " \n";
                 usersC.erase(usersC.begin()+j);
             }
         }
-        chanTlkUser.erase(it);
-        chanTlkUser.insert(pair<string,vector<string> >(channels[i],usersC));
+        chanTlkUser.erase(itck);
+        chanTlkUser.insert(pair<string,vector<string> >(channels[ick],usersC));
     }
     // it = usrLisChan.find(user);
     // usrLisChan.erase(it);
