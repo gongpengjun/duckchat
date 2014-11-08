@@ -448,7 +448,7 @@ int logoutReq(struct request_logout *rl)
             }
         }
         chanTlkUser.erase(it);
-        chanTlkUser.insert(pair<string,vector<string> >(channels[i],usersC))
+        chanTlkUser.insert(pair<string,vector<string> >(channels[i],usersC));
     }
     // it = usrLisChan.find(user);
     // usrLisChan.erase(it);
