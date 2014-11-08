@@ -268,7 +268,7 @@ int sayReq(struct request_say *rs)
         int res= sendto(sockfd, msg, sizeof(struct text_say), 0, address, size);
         if (res == -1) {
             cout << "sendto very badd \n";
-            return -1;
+            //return -1;
         }
         free(msg);
     }
