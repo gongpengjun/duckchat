@@ -130,15 +130,16 @@ string getAddr_string() {
     return realAddrString;
 }
 //returns string form of address
-string getAddr_Port() {
+int getAddr_Port() {
     //new request address info
     struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
-    char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
+    //char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
     //make address string
-    inet_ntop(AF_INET, &(address->sin_port), addrString, BUFLEN);
+    //inet_ntop(AF_INET, &(address->sin_port), addrString, BUFLEN);
     //have tmp var
-    string realAddrString = addrString;
-    free (addrString);
+    
+    int realAddrString = htons(&(address->sin_port));
+    //free (addrString);
     return realAddrString;
 }
 //check if current request address is valid or exist in map
@@ -228,7 +229,7 @@ int sayReq(struct request_say *rs)
 //handle login requests
 int loginReq(struct request_login *rl)
 {
-    string tmpTest = getAddr_Port();
+    int tmpTest = getAddr_Port();
     cout << "this should be PORT " << tmpTest << " \n";
     cout << "this spot 1 \n";
     string realAddrString = getAddr_string();
