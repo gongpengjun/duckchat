@@ -206,8 +206,8 @@ int sayReq(struct request_say *rs)
         inet_pton(AF_INET, s, &address);
         multimap<string,int>::iterator addrToPit = addrToPort.find(ad.first);
         cout << "port as is: " << addrToPit->second << " \n";
-        address.sin_port = addrToPit->second;
-        address.sin_family = AF_INET;
+        address->sin_port = addrToPit->second;
+        address->sin_family = AF_INET;
         //struct sockaddr* realAddr = (sockaddr*)address;
         //char *p= (char*) malloc(sizeof(char)*BUFLEN);
         //strncpy(p, ad.second.c_str(), strlen(ad.second.c_str()));
