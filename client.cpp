@@ -1,10 +1,10 @@
 //client.cpp
- 
+
 /*
  * g++ -o client client.cpp or make
  * ./client <server-ip> port# username
  */
- 
+
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/types.h>
@@ -17,13 +17,14 @@
 #include <netdb.h>
 #include <fcntl.h>
 #include <iostream>
+#include <list>
 #include "duckchat.h"
 #define BUFLEN 1024
 #define STDIN 0
- 
+
 int connectToSocket(char*, char*);//socket setup
 int logUserIn(char*);//send login request and join Common
-void sendReqs();//send requests to server
+int sendReqs(char buf[], struct addrinfo* addrAr);//send requests to server
 int readMessageType(struct text *r, int b);//reads what type of message recieved from server
 int sayMess(struct text_say* rs);
 int listMess(struct text_list* rl);
@@ -33,6 +34,12 @@ void err(char*);//error function*/
 
 struct addrinfo *addrAr;
 int sockfd;
+char* channelName;
+char tmpChannelName[CHANNEL_MAX];
+
+std::list<char*> mylist;
+std::list<char*>::iterator it;
+
 using namespace std;
 int main(int argc, char* argv[])
 {
@@ -40,6 +47,9 @@ int main(int argc, char* argv[])
     char buf[BUFLEN];
     addrAr = NULL;
     sockfd = 0;
+    channelName = "Common";
+    it = mylist.begin();
+    mylist.push_back("Common");
     //error checking correct run input
     if(argc != 4)
     {
@@ -49,18 +59,19 @@ int main(int argc, char* argv[])
     //call to connect socket and call to send login request to server
     connectToSocket(argv[1], argv[2]);
     logUserIn(argv[3]);
-    printf("argv 1: %s argv 2: %s argv 3: %s\n", argv[1], argv[2], argv[3]);
-	//FD_SET(sockfd, &readfds);//add our socket to our set of files to read from
+    //printf("argv 1: %s argv 2: %s argv 3: %s\n", argv[1], argv[2], argv[3]);
+    //FD_SET(sockfd, &readfds);//add our socket to our set of files to read from
 
     struct text* response;//for testing
 
     while(1)
     {
-    	//We want to get array of request structs  
-    	//then evaluate request and have different method handle each request
+        //We want to get array of request structs
+        //then evaluate request and have different method handle each request
+
         fd_set readfds;
         struct timeval tv;
-        tv.tv_sec = 1;
+        tv.tv_sec = .2;
         tv.tv_usec = 0;
         FD_ZERO(&readfds);//clean set
         FD_SET(STDIN, &readfds);//add stdin
@@ -77,18 +88,27 @@ int main(int argc, char* argv[])
             FD_CLR(STDIN, &readfds);
             scanf("%[^\n]",buf);
             getchar();
-            if(strcmp(buf,"exit") == 0)
-              exit(0);
+            //if(strcmp(buf,"exit") == 0)
+              //exit(0);
+
+            //if(sendReqs(buf, addrAr))//user is trying to say somthing to the server
+            sendReqs(buf, addrAr);
+                //cout << "successfull send" << endl;
+
         }
 
         int bal = 0;
-        if(bal = recvfrom(sockfd, buf, BUFLEN, 0,(struct sockaddr*)&addrAr->ai_addr, &addrAr->ai_addrlen) > 0)//if we recieve somthing, print it.
+        int tempsockfd = sockfd;
+        bal = recvfrom(sockfd, buf, BUFLEN, 0,(struct sockaddr*)addrAr->ai_addr, &addrAr->ai_addrlen);
+        if(bal > 0)//if we recieve somthing, print it.
         {
-            printf("recv()'d %d bytes of data in buf\n", bal);
+            //printf("recv()'d %d bytes of data in buf\n", bal);
             response = (text*) buf;
             readMessageType(response, bal);
 
         }
+        else
+            sockfd = tempsockfd;
     }
 }//end main
 
@@ -101,25 +121,25 @@ void err(char *s)
 int logUserIn(char* user)
 {
     //send login request to server and then send join common request
-	printf("logging in...\n");
-	//setting up structures
-	struct request_login login;
+    //printf("logging in...\n");
+    //setting up structures
+    struct request_login login;
     login.req_type = REQ_LOGIN;
-	strcpy(login.req_username, user);
-	struct request_join join;
-	join.req_type = REQ_JOIN;
-	strcpy(join.req_channel, "Common");
-	printf("attempting to send login_req\n");
-	//sending structs
-	if (sendto(sockfd, &login, sizeof(login), 0, (struct
- 		sockaddr*)addrAr->ai_addr, addrAr->ai_addrlen)==-1)
+    strcpy(login.req_username, user);
+    struct request_join join;
+    join.req_type = REQ_JOIN;
+    strcpy(join.req_channel, "Common");
+    //printf("attempting to send login_req\n");
+    //sending structs
+    if (sendto(sockfd, &login, sizeof(login), 0, (struct
+        sockaddr*)addrAr->ai_addr, addrAr->ai_addrlen)==-1)
             err("sendto()");
 
-	printf("attempting to send join_req\n");
-	if (sendto(sockfd, &join, sizeof(join), 0, (struct
- 		sockaddr*)addrAr->ai_addr, addrAr->ai_addrlen)==-1)
+    //printf("attempting to send join_req\n");
+    if (sendto(sockfd, &join, sizeof(join), 0, (struct
+        sockaddr*)addrAr->ai_addr, addrAr->ai_addrlen)==-1)
             err("sendto()");
-	
+
     return true;
 }
 
@@ -139,7 +159,7 @@ int connectToSocket(char* ip, char* port)
     for(tmpAdAr = addrAr; tmpAdAr != NULL; tmpAdAr = tmpAdAr->ai_next)
     {
         sockfd = socket(tmpAdAr->ai_family, tmpAdAr->ai_socktype, tmpAdAr->ai_protocol);
-	//sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    //sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
         if(sockfd == -1)
         {
             err("Client : socket() NOT successful\n");
@@ -152,27 +172,35 @@ int connectToSocket(char* ip, char* port)
     flags |= O_NONBLOCK;
     fcntl(sockfd, F_SETFL, flags);*/
     fcntl(sockfd, F_SETFL, O_NONBLOCK);//set socket to be non-blocking
-    printf("socket and bind successful! \n");
+    //printf("socket and bind successful! \n");
     return true;
 }
 
 int sayMess(text_say *rs)
 {
+    cout << "[" << rs->txt_channel << "]" << "[" << rs->txt_username << "]:" << rs->txt_text << endl;
     return 0;
 }
 
 int listMess(text_list *rl)
 {
+    cout << "Existing channels:" << endl;
+    for(int i = 0; i < rl->txt_nchannels; i++)
+        cout << "  " << rl->txt_channels[i].ch_channel << endl;
     return 0;
 }
 
 int whoMess(text_who *rw)
 {
+    cout << "Users on channel "<< rw->txt_channel << ":" << endl;
+    for(int i = 0; i < rw->txt_nusernames; i++)
+        cout << "  " << rw->txt_users[i].us_username << endl;
     return 0;
 }
 
 int errorMess(text_error *re)
 {
+    cout << "error message from server: " << re->txt_error << endl;
     return 0;
 }
 
@@ -197,7 +225,7 @@ int readMessageType(struct text *r, int b) //what type of message have we reciev
     //printf("the value isss: %s \n", ntohl(r->req_type));
         case TXT_SAY:
             if(sizeof(struct text_say) == b) {
-                cout << "say message\n";
+                //cout << "say message\n";
                 fin = sayMess((struct text_say*) r);
                 break;
             } else {
@@ -205,8 +233,8 @@ int readMessageType(struct text *r, int b) //what type of message have we reciev
                 break;
             }
         case TXT_LIST:
-            if(sizeof(struct text_list) == b) {
-                cout << "list message\n";
+            if(sizeof(struct text_list) + (((struct text_list*)r)->txt_nchannels)*sizeof(struct channel_info) == b) {
+                //cout << "list message\n";
                 fin = listMess((struct text_list*) r);
                 break;
             } else {
@@ -215,8 +243,9 @@ int readMessageType(struct text *r, int b) //what type of message have we reciev
             }
         case TXT_WHO:
             //printf("join case made \n");
-            if(sizeof(struct text_who) == b) {
-                cout << "who message\n";
+
+            if(sizeof(struct text_who) + (((struct text_who*)r)->txt_nusernames)*sizeof(struct user_info) == b) {
+                //cout << "who message\n";
                 fin = whoMess((struct text_who*) r);
                 break;
             } else {
@@ -225,7 +254,7 @@ int readMessageType(struct text *r, int b) //what type of message have we reciev
             }
         case TXT_ERROR:
             if(sizeof(struct text_error) == b) {
-                cout << "error message\n";
+                //cout << "error message\n";
                 fin = errorMess((struct text_error*) r);
                 break;
             } else {
@@ -233,8 +262,151 @@ int readMessageType(struct text *r, int b) //what type of message have we reciev
                 break;
             }
         default:
-            cout << "default case hit!!\n";
+            cout << "default case hit! Error occured!\n";
     }
     return fin;
 }
 
+int sendReqs(char buf[], struct addrinfo* addrAr)//parse user input and send appropriate message to server
+{
+    if(buf[0] == '/')
+    {
+        //cout << "special request" << endl;
+        // /exit
+        if(buf[1] == 'e' && buf[2] == 'x' && buf[3] == 'i' && buf[4] == 't' && buf[5] == '\0')
+        {
+            //cout << "exit detected" << endl;
+            struct request_logout logout;
+            logout.req_type = REQ_LOGOUT;
+            int size = sizeof(struct sockaddr);
+            if (sendto(sockfd, &logout, sizeof(logout), 0, (struct sockaddr*)addrAr->ai_addr, size)==-1)//addrAr->ai_addrlen
+                    err("sendto()");
+            exit(1);//quit program
+        }
+        // /join
+        else if(buf[1] == 'j' && buf[2] == 'o' && buf[3] == 'i' && buf[4] == 'n' && buf[5] == ' ')
+        {
+            //cout << "join detected" << endl;
+            struct request_join join;
+            join.req_type = REQ_JOIN;
+            int i;
+            for(i = 0; i < CHANNEL_MAX; i++)
+            {
+                if(buf[i+6] == '\0')
+                {
+                    tmpChannelName[i] = '\0';
+                    break;
+                }
+                tmpChannelName[i] = buf[i + 6];
+            }
+            //it=mylist.begin();
+
+            cout << "Inserting " << tmpChannelName << " in vector" << endl;
+            mylist.push_back(tmpChannelName);
+
+            channelName = tmpChannelName;
+            strcpy(join.req_channel, channelName);
+            int size = sizeof(struct sockaddr);
+            if (sendto(sockfd, &join, sizeof(join), 0, (struct sockaddr*)addrAr->ai_addr, size)==-1)//addrAr->ai_addrlen
+                    err("sendto()");
+        }
+        // /leave
+        else if(buf[1] == 'l' && buf[2] == 'e' && buf[3] == 'a' && buf[4] == 'v' && buf[5] == 'e' && buf[6] == ' ')
+        {
+            //cout << "leave decected" << endl;
+            struct request_leave leave;
+            leave.req_type = REQ_LEAVE;
+            int i;
+            for(i = 0; i < CHANNEL_MAX; i++)
+            {
+                if(buf[i+7] == '\0')
+                {
+                    tmpChannelName[i] = '\0';
+                    break;
+                }
+                tmpChannelName[i] = buf[i + 7];
+            }
+            strcpy(leave.req_channel, channelName);
+            int size = sizeof(struct sockaddr);
+            if (sendto(sockfd, &leave, sizeof(leave), 0, (struct sockaddr*)addrAr->ai_addr, size)==-1)//addrAr->ai_addrlen
+                    err("sendto()");
+        }
+        // /list
+        else if(buf[1] == 'l' && buf[2] == 'i' && buf[3] == 's' && buf[4] == 't' && buf[5] == '\0')
+        {
+            //cout << "list detected" << endl;
+            struct request_list list;
+            list.req_type = REQ_LIST;
+            int size = sizeof(struct sockaddr);
+            if (sendto(sockfd, &list, sizeof(list), 0, (struct sockaddr*)addrAr->ai_addr, size)==-1)//addrAr->ai_addrlen
+                    err("sendto()");
+        }
+        // /who
+        else if(buf[1] == 'w' && buf[2] == 'h' && buf[3] == 'o' && buf[4] == ' ')
+        {
+            //cout << "who dectected" << endl;
+            struct request_who who;
+            who.req_type = REQ_WHO;
+            int i;
+            for(i = 0; i < CHANNEL_MAX; i++)
+            {
+                if(buf[i+5] == '\0')
+                {
+                    tmpChannelName[i] = '\0';
+                    //channelName[i] = '\0';
+                    break;
+                }
+                tmpChannelName[i] = buf[i + 5];
+                //cout << "tmp[i] = " << tmp[i] << endl;
+            }
+            channelName = tmpChannelName;
+            strcpy(who.req_channel, channelName);
+            int size = sizeof(struct sockaddr);
+            if (sendto(sockfd, &who, sizeof(who), 0, (struct sockaddr*)addrAr->ai_addr, size)==-1)//addrAr->ai_addrlen
+                    err("sendto()");
+        }
+        // /switch
+        else if(buf[1] == 's' && buf[2] == 'w' && buf[3] == 'i' &&
+                buf[4] == 't' && buf[5] == 'c' && buf[6] == 'h' && buf[7] == ' ')
+        {
+            int i;
+            bool found = false;//valid channel check
+            for(i = 0; i < CHANNEL_MAX; i++)
+            {
+                if(buf[i+8] == '\0')
+                {
+                    tmpChannelName[i] = '\0';
+                    break;
+                }
+                tmpChannelName[i] = buf[i + 8];
+            }
+            //check if user has specified valid channel
+            for(it=mylist.begin(); it!=mylist.end(); ++it)
+            {
+                if(strcmp(*it, tmpChannelName) == 0)
+                {
+                    found = true;
+                    cout << "found channel name "<< *it << " in vector" << endl;
+                     channelName = tmpChannelName;
+                    break;
+                }
+            }
+            if(!found)
+                cout << "You have not subscribed to channel " << tmpChannelName << endl;
+        }
+
+    }
+    // must be a say request
+    else
+    {
+        struct request_say* say = new struct request_say;
+        say->req_type = REQ_SAY;
+        strcpy(say->req_channel, channelName);//copy channel name into usable format
+        strcpy(say->req_text, buf);
+        int size = sizeof(struct sockaddr);
+        if (sendto(sockfd, say, sizeof(*say), 0, (struct sockaddr*)addrAr->ai_addr, size)==-1)//addrAr->ai_addrlen
+                err("sendto()");
+        delete say;
+    }
+    return 1;
+}
