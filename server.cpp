@@ -254,6 +254,24 @@ int loginReq(struct request_login *rl)
     cout << "this spot 3 \n";
     addrToUser.insert(pair<pair<string,string>,string>(pair<string,string>(realAddrString,smiAddr), username));
     userToAddr.insert(pair<string,pair<string,string> >(username, pair<string,string>(realAddrString,smiAddr)));
+    map<pair<string,string>,string>::iterator it;
+    if(!addrToUser.empty()) {
+        cout << "SIZE OF AtoU: " << addrToUser.size() << "\n";
+        for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
+                    cout << it->first.first << " is the complex address.\n";
+                    cout << it->first.second << " is the simple address.\n";
+                    cout << it->second << " is the user.\n";
+        }  
+    }
+    map<string,pair<string,string>>::iterator its;
+    if(!userToAddr.empty()) {
+        cout << "SIZE OF UtoA: " << userToAddr.size() << "\n";
+        for(its = userToAddr.begin(); its != userToAddr.end(); its++) {
+            cout << its->first << " is the user.\n";
+            cout << its->second.first << " is the complex addrr.\n";
+            cout << its->second.second << " is the simple addrr.\n";
+        }
+    } 
     cout << "this spot 4 \n";
     //add user to common
     map<string,vector<string> >::iterator it = chanTlkUser.find("Common");
