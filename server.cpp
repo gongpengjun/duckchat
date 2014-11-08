@@ -249,7 +249,7 @@ int loginReq(struct request_login *rl)
     cout << "this spot 3 \n";
     addrToUser.insert(pair<pair<string,string>,string>(pair<string,string>(realAddrString,smiAddr), username));
     userToAddr.insert(pair<string,pair<string,string> >(username, pair<string,string>(realAddrString,smiAddr)));
-    addrToPort.insert(realAddrString, prt);
+    addrToPort.insert(pair<string,int>(realAddrString, prt));
     //printing
     map<pair<string,string>,string>::iterator mit;
     if(!addrToUser.empty()) {
