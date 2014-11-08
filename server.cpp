@@ -44,6 +44,7 @@ int checkValidAddr();
 string getUserOfCurrAddr();
 string getAddr_string();
 string getSemiAddr_string();
+string getAddr_Port() {
 
 //program
 int main(int argc, char **argv)
@@ -131,7 +132,7 @@ string getAddr_string() {
     return realAddrString;
 }
 //returns string form of address
-int getAddr_Port() {
+string getAddr_Port() {
     //new request address info
     struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
     //char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
@@ -139,7 +140,7 @@ int getAddr_Port() {
     //inet_ntop(AF_INET, &(address->sin_port), addrString, BUFLEN);
     //have tmp var
     
-    int realAddrString = address->sin_port;
+    string realAddrString = address->sin_port;
     //free (addrString);
     return realAddrString;
 }
@@ -194,7 +195,7 @@ int sayReq(struct request_say *rs)
     for(int i=0; i<tmpU.size(); i++) {
         cout << "user: " << tmpU[i] << " on channel: " << channel << "\n";
         //get address of current user
-        struct sockaddr_in address;
+        struct sockaddr_in* address;
         multimap<string, pair<string,string> >::iterator ui = userToAddr.find(tmpU[i]);
         pair<string,string> ad = ui->second;
         cout << "this is address in loop of say " << ad.first << " and " << ad.second << "\n";
@@ -234,8 +235,8 @@ int sayReq(struct request_say *rs)
 //handle login requests
 int loginReq(struct request_login *rl)
 {
-    int prt = getAddr_Port();
-    cout << "this should be PORT " << recAddr->ai_port << " \n";
+    string prt = getAddr_Port();
+    cout << "this should be PORT " << prt << " \n";
     cout << "this spot 1 \n";
     string realAddrString = getAddr_string();
     cout << "this spot 2 \n";
