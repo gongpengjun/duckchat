@@ -409,13 +409,13 @@ int logoutReq(struct request_logout *rl)
 
     //pair<string,string> realAddrString (getAddr_string(),getSemiAddr_string());
     multimap<pair<string,string>, string>::iterator i;
-    for(i=addrToUser.begin(); i<addrToUser.end(); i++) {
+    for(i=addrToUser.begin(); i!=addrToUser.end(); i++) {
         if(i->second == username) {
             addrToUser.erase(i);
         }
     }
     multimap<string, pair<string,string> >::iterator ii;
-    for(ii=userToAddr.begin(); ii<userToAddr.end(); ii++) {
+    for(ii=userToAddr.begin(); ii!=userToAddr.end(); ii++) {
         if(ii->first == username) {
             userToAddr.erase(ii);
         }
