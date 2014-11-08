@@ -346,38 +346,43 @@ int joinReq(struct request_join *rj)
 
     string user = getUserOfCurrAddr();
     int trig = 0;
+    map<string,vector<string> >::iterator it = chanTlkUser.find(chan);
+    vector<string> usersC;
+    if(it == chanTlkUser.end()) {
+        //NEW CHANNEL
+        //chanTlkUser.insert(pair<string,vector<string> >("Common", usersC));
+        usersC.insert(usersC.begin(), username);
+        chanTlkUser.insert(pair<string,vector<string> >(chan, usersC));
+        channels.push_back(chan);
+
+    } else {
+        //old channel
+        it = chanTlkUser.find(chan);
+        usersC = it->second;
+        for(int i=0; i<usersC.size(); i++) {
+            if(usersC[i] == user) {
+                cout << "User exists in channel already!!!!!!!!!!__\n";
+                return -1;
+            }
+        }
+        usersC.insert(usersC.begin(), user);
+        chanTlkUser[chan] = usersC;
+    }
     //tmp vector for channel user is listening to
     vector<string> chanList = usrLisChan[user];
     //tmp string for channel user is talking to
     vector<string> chanTlk = usrTlkChan[user];
     //tmp vec for users on channel
-    vector<string> userList = chanTlkUser[chan];
-    //new channel case
-    for(int j=0; j<channels.size(); j++) {
-        if(channels[j] == chan) {
-            cout << "channel exists\n";
-            trig = 1;
-        }
-    }
-    if(trig == 0) {
-        //NEW CHANNEL....add channel to vector
-        cout << "add channel to vector\n";
-        channels.push_back(chan);
-
-    }
     //add new channel to back
     chanList.push_back(chan);
     //add channel to most recent channel to back
     chanTlk.push_back(chan);
     //
-    userList.push_back(user);
     //add vectors back to map, new channel at the back.
     chanTlkUser[chan] = userList;
     usrLisChan[user] = chanList;
-    usrTlkChan[user] = chanTlk;
     chanList.clear();
     chanTlk.clear();
-    userList.clear();
     return 0;
 }
 //handle login requests
