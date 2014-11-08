@@ -200,9 +200,9 @@ int sayReq(struct request_say *rs)
         cout << "this is address in loop of say " << ad.first << " and " << ad.second << "\n";
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
         //move ad to t (address)
-        strncpy(s, ad.first.c_str(), strlen(ad.first.c_str()));
+        strncpy(s, ad.second.c_str(), strlen(ad.second.c_str()));
         //from s to address and format
-        inet_pton(AF_INET, s, &(address.sin_addr));
+        inet_pton(AF_INET, s, &address);
         multimap<string,int>::iterator addrToPit = addrToPort.find(ad.first);
         address.sin_port = addrToPit->second;
         address.sin_family = AF_INET;
