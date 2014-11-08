@@ -87,6 +87,7 @@ int main(int argc, char **argv)
         if(bal > 0) {
             printf("recv()'d %d bytes of data in buf\n", bal);
             requests = (request*) buf;
+            cout << "do I get herer??? \n";
             readRequestType(requests, bal);  
             //print stuff
             // map<string,string>::iterator it;
@@ -466,7 +467,7 @@ int whoReq(struct request_who *rw)
 
 int readRequestType(struct request *r, int b) 
 {
-    cout << "do I get herer??? \n";
+
     int fin = 0;
     int netHost = 0;
     netHost = ntohl(r->req_type);
