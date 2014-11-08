@@ -205,20 +205,22 @@ int sayReq(struct request_say *rs)
     for(int i=0; i<tmpU.size(); i++) {
         cout << "user: " << tmpU[i] << " on channel: " << channel << "\n";
         //get address of current user
-        struct sockaddr_in* address;
+        struct sockaddr* address;
         multimap<string, pair<string,string> >::iterator ui = userToAddr.find(tmpU[i]);
         pair<string,string> ad = ui->second;
         cout << "this is address in loop of say " << ad.first << " and " << ad.second << "\n";
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
         //move ad to t (address)
-        strncpy(s, ad.first.c_str(), strlen(ad.first.c_str()));
+        strncpy(s, ad.second.c_str(), strlen(ad.second.c_str()));
+        cout << ad.second << " which that should be 0 and " << ad.first << " is 127\n"; 
         //from s to address and format
-        inet_pton(AF_INET, s, &(address->sin_addr));
+        inet_pton(AF_INET, s, &address);
+        struct sockaddr_in* addrSEND = address;
         multimap<string,int>::iterator addrToPit = addrToPort.find(ad.first);
         cout << "port as is: " << addrToPit->second << " \n";
-        address->sin_port = addrToPit->second;
-        cout << "PPPPPBBbb___port as is: " << address->sin_port << " \n";
-        address->sin_family = AF_INET;
+        addrSEND->sin_port = addrToPit->second;
+        //cout << "PPPPPBBbb___port as is: " << address->sin_port << " \n";
+        addrSEND->sin_family = AF_INET;
         //address->sin_addr = addrToPit->first;
         //struct sockaddr* realAddr = (sockaddr*)address;
         //char *p= (char*) malloc(sizeof(char)*BUFLEN);
@@ -234,7 +236,7 @@ int sayReq(struct request_say *rs)
         strncpy(msg->txt_channel, channel.c_str(), CHANNEL_MAX);
         //send message
         int size = sizeof(struct sockaddr*);
-        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, (struct sockaddr*)address, size);
+        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, (struct sockaddr*)addrSEND, size);
         if (res == -1) {
             cout << "sendto very badd \n";
             return -1;
