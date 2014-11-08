@@ -23,8 +23,8 @@
 #define BUFLEN 1024
 using namespace std;
 //globals
-socklen_t fromlen;
 struct sockaddr recAddr;
+socklen_t fromlen = sizeof(recAddr);
 int sockfd;
 struct addrinfo *addrAr;
 map<string, string> addrToUser;
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
         //for multiple requests maybe
         // requests = (struct request*) malloc(sizeof (struct request) + BUFLEN); 
         char *buf = new char[BUFLEN];
-        struct request *requests;  
+        struct request *requests = (struct request*)malloc(sizeof(struct request*) + BUFLEN);  
         int bal = 0;
         bal = recvfrom(sockfd, buf, BUFLEN, 0, (struct sockaddr*)&recAddr, &fromlen);
         if(bal > 0) {
