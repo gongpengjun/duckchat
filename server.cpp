@@ -83,10 +83,10 @@ int main(int argc, char **argv)
         char *buf = new char[BUFLEN];
         struct request *requests = (struct request*)malloc(sizeof(struct request*) + BUFLEN);  
         int bal = 0;
-        bal = recvfrom(sockfd, buf, BUFLEN, 0, (struct sockaddr*)&recAddr, &fromlen);
+        bal = recvfrom(sockfd, requests, BUFLEN, 0, (struct sockaddr*)&recAddr, &fromlen);
         if(bal > 0) {
             printf("recv()'d %d bytes of data in buf\n", bal);
-            requests = (request*) buf;
+            //requests = (request*) buf;
             cout << "do I get herer??? \n";
             readRequestType(requests, bal);  
             //print stuff
@@ -116,7 +116,7 @@ int main(int argc, char **argv)
             //     chanTlkUser[channels[i]] = uOnC;
             // }   
         } 
-       requests = NULL;
+       //requests = NULL;
        delete[] buf;   
     }
     return 0;
