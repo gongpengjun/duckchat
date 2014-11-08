@@ -192,7 +192,6 @@ int sayReq(struct request_say *rs)
         //get address of current user
         struct sockaddr_in address;
         string ad = userToAddr[tmpU[i]];
-        cout << ad << " POOP that is addeess\n";
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
         //move ad to t (address)
         strncpy(s, ad.c_str(), strlen(ad.c_str()));
@@ -267,10 +266,10 @@ int loginReq(struct request_login *rl)
 
     cout << "username in login req: " << username << "\n";
     cout << "address in login req: " << realAddrString << "\n";
-    // addrToUser.insert(pair<string, string>(realAddrString, username));
-    // userToAddr.insert(pair<string, string>(username, realAddrString));
-    addrToUser[realAddrString] = username;
-    userToAddr[username] = realAddrString;
+    addrToUser.insert(pair<string, string>(realAddrString, username));
+    userToAddr.insert(pair<string, string>(username, realAddrString));
+    // addrToUser[realAddrString] = username;
+    // userToAddr[username] = realAddrString;
     return 0;
 }
 //handle login requests
@@ -464,7 +463,6 @@ int readRequestType(struct request *r, int b)
     }
     return fin;
 }
-
 
 int connectToSocket(char* ip, char* port)
 {
