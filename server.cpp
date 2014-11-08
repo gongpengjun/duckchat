@@ -213,7 +213,7 @@ int sayReq(struct request_say *rs)
         //move ad to t (address)
         strncpy(s, ad.first.c_str(), strlen(ad.first.c_str()));
         //from s to address and format
-        inet_pton(AF_INET, s, &(address->sin_addr);
+        inet_pton(AF_INET, s, &(address->sin_addr));
         multimap<string,int>::iterator addrToPit = addrToPort.find(ad.first);
         cout << "port as is: " << addrToPit->second << " \n";
         address->sin_port = addrToPit->second;
