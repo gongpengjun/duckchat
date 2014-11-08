@@ -240,8 +240,9 @@ int sayReq(struct request_say *rs)
 //handle login requests
 int loginReq(struct request_login *rl)
 {
+    cout << "this spot 1 \n":
     string realAddrString = getAddr_string();
-
+    cout << "this spot 2 \n":
     //username
     string username = rl->req_username;
     cout << "this is the real addr string in login: " << realAddrString << "\n";
@@ -250,23 +251,36 @@ int loginReq(struct request_login *rl)
     cout << "address in login req: " << realAddrString << "\n";
     //add address and username to map
     string smiAddr = getSemiAddr_string();
+    cout << "this spot 3 \n":
     addrToUser.insert(pair<pair<string,string>,string>(pair<string,string>(realAddrString,smiAddr), username));
     userToAddr.insert(pair<string,pair<string,string> >(username, pair<string,string>(realAddrString,smiAddr)));
+    cout << "this spot 4 \n":
     //add user to common
     map<string,vector<string> >::iterator it = chanTlkUser.find("Common");
     vector<string> usersC;
+    cout << "this spot 5 \n":
     if(it == chanTlkUser.end()) {
+        cout << "this spot 6 \n":
         chanTlkUser.insert(pair<string,vector<string> >("Common", usersC));
+        cout << "this spot 7 \n":
     }
+    cout << "this spot 8 \n":
     it = chanTlkUser.find("Common");
+    cout << "this spot 9 \n":
     usersC = it->second;
+    cout << "this spot 10 \n":
     usersC.insert(usersC.begin(), username);
+    cout << "this spot 11 \n":
     chanTlkUser["Common"] = usersC;
     //add to user lisChan
+    cout << "this spot 12 \n":
     vector<string> chans;
     chans.insert(chans.begin(), "Common");
+    cout << "this spot 13 \n":
     usrLisChan.insert(pair<string,vector<string> >(username, chans));
+    cout << "this spot 14 \n":
     usrTlkChan.insert(pair<string,vector<string> >(username, chans));
+    cout << "this spot 15 \n":
     // OLD CODE//new request address inf.find()o
     // struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
     
