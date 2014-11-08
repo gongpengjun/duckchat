@@ -181,7 +181,7 @@ int sayReq(struct request_say *rs)
     //vector<string> tmpU = usrLisChan[username];
     map<string,vector<string> >::iterator hit = chanTlkUser.find(channel);
     if(hit == chanTlkUser.end()) {
-        cout << "HOLD not here : " << channel <<"\n";  
+        cout << "JESUS CHRIST: " << channel <<"\n";  
         return -1; 
     }
     vector<string> tmpU = hit->second;
@@ -190,7 +190,7 @@ int sayReq(struct request_say *rs)
     for(int i=0; i<tmpU.size(); i++) {
         cout << "user: " << tmpU[i] << " on channel: " << channel << "\n";
         //get address of current user
-        struct sockaddr_in address;
+        struct sockaddr_in* address;
         string ad = userToAddr[tmpU[i]];
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
         //move ad to t (address)
