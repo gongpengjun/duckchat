@@ -205,7 +205,7 @@ int sayReq(struct request_say *rs)
     for(int i=0; i<tmpU.size(); i++) {
         cout << "user: " << tmpU[i] << " on channel: " << channel << "\n";
         //get address of current user
-        struct sockaddr* address;
+        struct sockaddr_in* address;
         multimap<string, pair<string,string> >::iterator ui = userToAddr.find(tmpU[i]);
         pair<string,string> ad = ui->second;
         cout << "this is address in loop of say " << ad.first << " and " << ad.second << "\n";
@@ -214,7 +214,7 @@ int sayReq(struct request_say *rs)
         strncpy(s, ad.second.c_str(), strlen(ad.second.c_str()));
         cout << ad.second << " which that should be 0 and " << ad.first << " is 127\n"; 
         //from s to address and format
-        inet_pton(AF_INET, s, &address);
+        inet_pton(AF_INET, s, &(address->sin_addr));
         
         multimap<string,int>::iterator addrToPit = addrToPort.find(ad.first);
         cout << "port as is: " << addrToPit->second << " \n";
