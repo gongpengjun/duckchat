@@ -28,6 +28,7 @@ struct sockaddr recAddr;
 socklen_t fromlen = sizeof(recAddr);
 int sockfd;
 struct addrinfo *addrAr;
+multimap<string, int> addrToPort;
 multimap<pair<string,string>, string> addrToUser;
 multimap<string, pair<string,string> > userToAddr;
 map<string,vector<string> > usrLisChan;
@@ -193,15 +194,18 @@ int sayReq(struct request_say *rs)
     for(int i=0; i<tmpU.size(); i++) {
         cout << "user: " << tmpU[i] << " on channel: " << channel << "\n";
         //get address of current user
-        struct sockaddr* address;
+        struct sockaddr_in* address;
         multimap<string, pair<string,string> >::iterator ui = userToAddr.find(tmpU[i]);
         pair<string,string> ad = ui->second;
         cout << "this is address in loop of say " << ad.first << " and " << ad.second << "\n";
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
         //move ad to t (address)
-        strncpy(s, ad.second.c_str(), strlen(ad.second.c_str()));
+        strncpy(s, ad.first.c_str(), strlen(ad.first.c_str()));
         //from s to address and format
         inet_pton(AF_INET, s, &address);
+        multimap<string,int>::iterator addrToPit = addrToPort.find(ad.first);
+        address.sin_port = addrToPit->second;
+        address.sin_family = AF_INET;
         //struct sockaddr* realAddr = (sockaddr*)address;
         //char *p= (char*) malloc(sizeof(char)*BUFLEN);
         //strncpy(p, ad.second.c_str(), strlen(ad.second.c_str()));
@@ -215,8 +219,8 @@ int sayReq(struct request_say *rs)
         strncpy(msg->txt_text, message.c_str(), SAY_MAX);
         strncpy(msg->txt_channel, channel.c_str(), CHANNEL_MAX);
         //send message
-        int size = sizeof(struct sockaddr);
-        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, address, size);
+        int size = sizeof(struct sockaddr*);
+        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, (sockaddr*)&address, size);
         if (res == -1) {
             cout << "sendto very badd \n";
             return -1;
@@ -229,7 +233,7 @@ int sayReq(struct request_say *rs)
 //handle login requests
 int loginReq(struct request_login *rl)
 {
-    int tmpTest = getAddr_Port();
+    int prt = getAddr_Port();
     cout << "this should be PORT " << tmpTest << " \n";
     cout << "this spot 1 \n";
     string realAddrString = getAddr_string();
@@ -245,6 +249,7 @@ int loginReq(struct request_login *rl)
     cout << "this spot 3 \n";
     addrToUser.insert(pair<pair<string,string>,string>(pair<string,string>(realAddrString,smiAddr), username));
     userToAddr.insert(pair<string,pair<string,string> >(username, pair<string,string>(realAddrString,smiAddr)));
+    addrToPort.insert(realAddrString, prt);
     //printing
     map<pair<string,string>,string>::iterator mit;
     if(!addrToUser.empty()) {
