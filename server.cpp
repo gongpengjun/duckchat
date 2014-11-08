@@ -237,7 +237,7 @@ int loginReq(struct request_login *rl)
     if(it == chanTlkUser.end()) {
         chanTlkUser.insert(pair<string,vector<string> >("Common", usersC));
     }
-    it = chanTlkUser.find('Common');
+    it = chanTlkUser.find("Common");
     usersC = it->second;
     usersC.insert(users.begin(), username);
     chanTlkUser["Common"] = usersC;
