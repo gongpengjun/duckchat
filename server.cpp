@@ -379,8 +379,8 @@ int joinReq(struct request_join *rj)
     chanTlk.push_back(chan);
     //
     //add vectors back to map, new channel at the back.
-    chanTlkUser[chan] = userList;
     usrLisChan[user] = chanList;
+    usrTlkChan[user] = chanTlk;
     chanList.clear();
     chanTlk.clear();
     return 0;
