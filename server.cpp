@@ -44,7 +44,7 @@ int checkValidAddr();
 string getUserOfCurrAddr();
 string getAddr_string();
 string getSemiAddr_string();
-string getAddr_Port() {
+string getAddr_Port();
 
 //program
 int main(int argc, char **argv)
