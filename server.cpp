@@ -66,33 +66,33 @@ int main(int argc, char **argv)
             cout << "do I get herer??? \n";
             readRequestType(requests, bal);  
             //print stuff
-            map<pair<string,string>,string>::iterator it;
-            if(!addrToUser.empty()) {
-                cout << "SIZE OF AtoU: " << addrToUser.size() << "\n";
-                for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
-                            cout << it->first.first << " is the complex address.\n";
-                            cout << it->first.second << " is the simple address.\n";
-                            cout << it->second << " is the user.\n";
-                }  
-            }
-            map<string,pair<string,string> >::iterator its;
-            if(!userToAddr.empty()) {
-                cout << "SIZE OF UtoA: " << userToAddr.size() << "\n";
-                for(its = userToAddr.begin(); its != userToAddr.end(); its++) {
-                    cout << its->first << " is the user.\n";
-                    cout << its->second.first << " is the complex addrr.\n";
-                    cout << its->second.second << " is the simple addrr.\n";
-                }
-            } 
-            for(int i=0; i<channels.size(); i++) {
-                vector<string> uOnC = chanTlkUser[channels[i]];
-                if(!uOnC.empty()) {
-                    for(int j=0; j<uOnC.size(); j++) {
-                        cout << uOnC[j] << " is user on channel: " << channels[i] << " from chanTlkUser.\n";
-                    }
-                }
-                chanTlkUser[channels[i]] = uOnC;
-            }   
+            // map<pair<string,string>,string>::iterator it;
+            // if(!addrToUser.empty()) {
+            //     cout << "SIZE OF AtoU: " << addrToUser.size() << "\n";
+            //     for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
+            //                 cout << it->first.first << " is the complex address.\n";
+            //                 cout << it->first.second << " is the simple address.\n";
+            //                 cout << it->second << " is the user.\n";
+            //     }  
+            // }
+            // map<string,pair<string,string> >::iterator its;
+            // if(!userToAddr.empty()) {
+            //     cout << "SIZE OF UtoA: " << userToAddr.size() << "\n";
+            //     for(its = userToAddr.begin(); its != userToAddr.end(); its++) {
+            //         cout << its->first << " is the user.\n";
+            //         cout << its->second.first << " is the complex addrr.\n";
+            //         cout << its->second.second << " is the simple addrr.\n";
+            //     }
+            // } 
+            // for(int i=0; i<channels.size(); i++) {
+            //     vector<string> uOnC = chanTlkUser[channels[i]];
+            //     if(!uOnC.empty()) {
+            //         for(int j=0; j<uOnC.size(); j++) {
+            //             cout << uOnC[j] << " is user on channel: " << channels[i] << " from chanTlkUser.\n";
+            //         }
+            //     }
+            //     chanTlkUser[channels[i]] = uOnC;
+            // }   
         } 
        //requests = NULL;
        delete[] buf;   
@@ -191,7 +191,7 @@ int sayReq(struct request_say *rs)
     string channel = rs->req_channel;
     string message = rs->req_text;
     string username = getUserOfCurrAddr();
-    cout << "this is username in sayReq " << username << "\n";
+    //cout << "this is username in sayReq " << username << "\n";
     //get list of users on channel from usrLisChan
     //vector<string> tmpU = usrLisChan[username];
     map<string,vector<string> >::iterator hit = chanTlkUser.find(channel);
@@ -203,7 +203,7 @@ int sayReq(struct request_say *rs)
     //for all users on the channel
         //write the message to those users by there address
     for(int i=0; i<tmpU.size(); i++) {
-        cout << "user: " << tmpU[i] << " on channel: " << channel << "\n";
+        cout << "user: " << tmpU[i] << " on channel: " << channel << " in iteration on say loop:  " << i <<"\n";
         //get address of current user
         /*struct sockaddr_in6* address;
         multimap<string, pair<string,string> >::iterator ui = userToAddr.find(tmpU[i]);
@@ -247,7 +247,7 @@ int sayReq(struct request_say *rs)
         multimap<string, pair<string,string> >::iterator ui = userToAddr.find(tmpU[i]);
         pair<string,string> tad = ui->second;
         string ad = tad.second;
-        cout << tad.second << " LISTEN MANN\n";
+        //cout << tad.second << " LISTEN MANN\n";
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
         multimap<string,int>::iterator addrToPit = addrToPort.find(tad.first);
         cout << "portPARIS as is: " << addrToPit->second << " \n";
@@ -281,67 +281,67 @@ int loginReq(struct request_login *rl)
     int poort = getAddr_Port();
     cout << "this should be PORT " << poort << " \n";
     int prt = (int)poort;
-    cout << "this spot 1 \n";
+    //cout << "this spot 1 \n";
     string realAddrString = getAddr_string();
-    cout << "this spot 2 \n";
+    //cout << "this spot 2 \n";
     //username
     string username = rl->req_username;
-    cout << "this is the real addr string in login: " << realAddrString << "\n";
+    //cout << "this is the real addr string in login: " << realAddrString << "\n";
 
-    cout << "username in login req: " << username << "\n";
-    cout << "address in login req: " << realAddrString << "\n";
+    //cout << "username in login req: " << username << "\n";
+    //cout << "address in login req: " << realAddrString << "\n";
     //add address and username to map
     string smiAddr = getSemiAddr_string();
-    cout << "this spot 3 \n";
+    //cout << "this spot 3 \n";
     addrToUser.insert(pair<pair<string,string>,string>(pair<string,string>(realAddrString,smiAddr), username));
     userToAddr.insert(pair<string,pair<string,string> >(username, pair<string,string>(realAddrString,smiAddr)));
     addrToPort.insert(pair<string,int>(realAddrString, prt));
     //printing
-    map<pair<string,string>,string>::iterator mit;
-    if(!addrToUser.empty()) {
-        cout << "SIZE OF AtoU: " << addrToUser.size() << "\n";
-        for(mit = addrToUser.begin(); mit != addrToUser.end(); mit++) {
-                    cout << mit->first.first << " is the complex address.\n";
-                    cout << mit->first.second << " is the simple address.\n";
-                    cout << mit->second << " is the user.\n";
-        }  
-    }
-    map<string,pair<string,string> >::iterator its;
-    if(!userToAddr.empty()) {
-        cout << "SIZE OF UtoA: " << userToAddr.size() << "\n";
-        for(its = userToAddr.begin(); its != userToAddr.end(); its++) {
-            cout << its->first << " is the user.\n";
-            cout << its->second.first << " is the complex addrr.\n";
-            cout << its->second.second << " is the simple addrr.\n";
-        }
-    } 
-    cout << "this spot 4 \n";
+    // map<pair<string,string>,string>::iterator mit;
+    // if(!addrToUser.empty()) {
+    //     cout << "SIZE OF AtoU: " << addrToUser.size() << "\n";
+    //     for(mit = addrToUser.begin(); mit != addrToUser.end(); mit++) {
+    //                 cout << mit->first.first << " is the complex address.\n";
+    //                 cout << mit->first.second << " is the simple address.\n";
+    //                 cout << mit->second << " is the user.\n";
+    //     }  
+    // }
+    // map<string,pair<string,string> >::iterator its;
+    // if(!userToAddr.empty()) {
+    //     cout << "SIZE OF UtoA: " << userToAddr.size() << "\n";
+    //     for(its = userToAddr.begin(); its != userToAddr.end(); its++) {
+    //         cout << its->first << " is the user.\n";
+    //         cout << its->second.first << " is the complex addrr.\n";
+    //         cout << its->second.second << " is the simple addrr.\n";
+    //     }
+    // } 
+    //cout << "this spot 4 \n";
     //add user to common
     map<string,vector<string> >::iterator it = chanTlkUser.find("Common");
     vector<string> usersC;
-    cout << "this spot 5 \n";
+    //cout << "this spot 5 \n";
     if(it == chanTlkUser.end()) {
-        cout << "this spot 6 \n";
+        //cout << "this spot 6 \n";
         chanTlkUser.insert(pair<string,vector<string> >("Common", usersC));
-        cout << "this spot 7 \n";
+        //cout << "this spot 7 \n";
     }
-    cout << "this spot 8 \n";
+    //cout << "this spot 8 \n";
     it = chanTlkUser.find("Common");
-    cout << "this spot 9 \n";
+    //cout << "this spot 9 \n";
     usersC = it->second;
-    cout << "this spot 10 \n";
+    //cout << "this spot 10 \n";
     usersC.insert(usersC.begin(), username);
-    cout << "this spot 11 \n";
+    //cout << "this spot 11 \n";
     chanTlkUser["Common"] = usersC;
     //add to user lisChan
-    cout << "this spot 12 \n";
+    //cout << "this spot 12 \n";
     vector<string> chans;
     chans.insert(chans.begin(), "Common");
-    cout << "this spot 13 \n";
+    //cout << "this spot 13 \n";
     usrLisChan.insert(pair<string,vector<string> >(username, chans));
-    cout << "this spot 14 \n";
+    //cout << "this spot 14 \n";
     usrTlkChan.insert(pair<string,vector<string> >(username, chans));
-    cout << "this spot 15 \n";
+    //cout << "this spot 15 \n";
     // OLD CODE//new request address inf.find()o
     // struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
     
@@ -467,7 +467,7 @@ int joinReq(struct request_join *rj)
         usersC = it->second;
         for(int i=0; i<usersC.size(); i++) {
             if(usersC[i] == user) {
-                cout << "User exists in channel already!!!!!!!!!!__\n";
+                //cout << "User exists in channel already!!!!!!!!!!__\n";
                 return -1;
             }
         }
@@ -518,7 +518,7 @@ int readRequestType(struct request *r, int b)
        netHost = r->req_type;
     }
     //check if request address is valid
-    cout << netHost << " this is the request type!!!! \n";
+    //cout << netHost << " this is the request type!!!! \n";
     if(netHost != 0) {
         if(checkValidAddr(r) == -1) {
             //bad address, return
