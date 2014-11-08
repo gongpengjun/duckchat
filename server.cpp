@@ -258,19 +258,8 @@ int loginReq(struct request_login *rl)
 
     cout << "username in login req: " << username << "\n";
     cout << "address in login req: " << realAddrString << "\n";
-    hit = addrToUser.find(realAddrString);
-    if(hit != addrToUser.end()) {
-        addrToUser.insert(hit, pair<string, string>(realAddrString, username));
-        cout << "login sshiizzz\n";
-        cout << realAddrString << " that THINGis the address\n";
-        //return -1;
-    }
-    hit = userToAddr.find(username);
-    if(hit != userToAddr.end()) {
-        userToAddr.insert(hit, pair<string, string>(username, realAddrString));
-        cout << "login shazzzz\n";
-        cout << realAddrString << " that THINGis the address ppp\n";
-    } 
+    addrToUser.insert(pair<string, string>(realAddrString, username));
+    userToAddr.insert(pair<string, string>(username, realAddrString));
     // addrToUser[realAddrString] = username;
     // userToAddr[username] = realAddrString;
     return 0;
