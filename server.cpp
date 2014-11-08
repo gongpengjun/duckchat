@@ -239,7 +239,7 @@ int loginReq(struct request_login *rl)
     }
     it = chanTlkUser.find("Common");
     usersC = it->second;
-    usersC.insert(users.begin(), username);
+    usersC.insert(usersC.begin(), username);
     chanTlkUser["Common"] = usersC;
     //add to user lisChan
     vector<string> channels;
