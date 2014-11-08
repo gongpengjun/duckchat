@@ -197,7 +197,7 @@ int sayReq(struct request_say *rs)
         //move ad to t (address)
         strncpy(s, ad.c_str(), strlen(ad.c_str()));
         //from s to address and format
-        inet_pton(AF_INET, s, &(address.sin_addr));
+        inet_pton(AF_INET, s, &(address->sin_addr));
         //setup message to send
         struct text_say *msg= (struct text_say*) malloc(sizeof(struct text_say));
         //set message type
