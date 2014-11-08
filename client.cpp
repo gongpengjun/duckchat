@@ -17,7 +17,8 @@
 #include <netdb.h>
 #include <fcntl.h>
 #include <iostream>
-#include <list>
+#include <set>
+#include <string>
 #include "duckchat.h"
 #define BUFLEN 1024
 #define STDIN 0
@@ -36,9 +37,10 @@ struct addrinfo *addrAr;
 int sockfd;
 char* channelName;
 char tmpChannelName[CHANNEL_MAX];
+char t2[CHANNEL_MAX];
 
-std::list<char*> mylist;
-std::list<char*>::iterator it;
+std::set<std::string> myset;
+std::set<std::string>::iterator it;
 
 using namespace std;
 int main(int argc, char* argv[])
@@ -48,8 +50,8 @@ int main(int argc, char* argv[])
     addrAr = NULL;
     sockfd = 0;
     channelName = "Common";
-    it = mylist.begin();
-    mylist.push_back("Common");
+    it = myset.begin();
+    myset.insert("Common");
     //error checking correct run input
     if(argc != 4)
     {
@@ -301,8 +303,9 @@ int sendReqs(char buf[], struct addrinfo* addrAr)//parse user input and send app
             }
             //it=mylist.begin();
 
-            cout << "Inserting " << tmpChannelName << " in vector" << endl;
-            mylist.push_back(tmpChannelName);
+            //cout << "Inserting " << tmpChannelName << " in set" << endl;
+            std::string str((char*)tmpChannelName);
+            myset.insert(str);
 
             channelName = tmpChannelName;
             strcpy(join.req_channel, channelName);
@@ -326,7 +329,30 @@ int sendReqs(char buf[], struct addrinfo* addrAr)//parse user input and send app
                 }
                 tmpChannelName[i] = buf[i + 7];
             }
-            strcpy(leave.req_channel, channelName);
+            std::string strn1((char*)tmpChannelName);
+            it=myset.find(strn1);
+            if(it == myset.end())
+            {
+                cout << "Error: No channel " << tmpChannelName << " exists" << endl;
+                it = myset.begin();
+                std::string tempString = *it;
+                channelName = (char*)tempString.c_str();
+                return 0;
+            }
+            else
+            {
+                myset.erase(strn1);
+                if(myset.size() != 0)
+                {
+                    it = myset.begin();
+                    std::string tempString2 = *it;
+                    channelName = (char*)tempString2.c_str();
+                }
+                else
+                    channelName = "";
+
+            }
+            strcpy(leave.req_channel, tmpChannelName);
             int size = sizeof(struct sockaddr);
             if (sendto(sockfd, &leave, sizeof(leave), 0, (struct sockaddr*)addrAr->ai_addr, size)==-1)//addrAr->ai_addrlen
                     err("sendto()");
@@ -370,7 +396,10 @@ int sendReqs(char buf[], struct addrinfo* addrAr)//parse user input and send app
                 buf[4] == 't' && buf[5] == 'c' && buf[6] == 'h' && buf[7] == ' ')
         {
             int i;
-            bool found = false;//valid channel check
+            //bool found = false;//valid channel check
+            //char t2[CHANNEL_MAX];
+            strcpy(t2, channelName);
+            std::string str;
             for(i = 0; i < CHANNEL_MAX; i++)
             {
                 if(buf[i+8] == '\0')
@@ -381,18 +410,27 @@ int sendReqs(char buf[], struct addrinfo* addrAr)//parse user input and send app
                 tmpChannelName[i] = buf[i + 8];
             }
             //check if user has specified valid channel
-            for(it=mylist.begin(); it!=mylist.end(); ++it)
+            //str((char*)tmpChannelName);
+            //mylist.push_back(str);
+            /*for(it=mylist.begin(); it!=mylist.end(); ++it)
             {
-                if(strcmp(*it, tmpChannelName) == 0)
+                if(strcmp(*it.second.cstr(), (char*)tmpChannelName) == 0)
                 {
                     found = true;
                     cout << "found channel name "<< *it << " in vector" << endl;
                      channelName = tmpChannelName;
                     break;
                 }
-            }
-            if(!found)
+            }*/
+            std::string strn((char*)tmpChannelName);
+            it=myset.find(strn);
+            if(it == myset.end())
+            {
                 cout << "You have not subscribed to channel " << tmpChannelName << endl;
+                channelName = t2;
+            }
+            else
+                channelName = tmpChannelName;
         }
 
     }
@@ -401,11 +439,14 @@ int sendReqs(char buf[], struct addrinfo* addrAr)//parse user input and send app
     {
         struct request_say* say = new struct request_say;
         say->req_type = REQ_SAY;
-        strcpy(say->req_channel, channelName);//copy channel name into usable format
-        strcpy(say->req_text, buf);
-        int size = sizeof(struct sockaddr);
-        if (sendto(sockfd, say, sizeof(*say), 0, (struct sockaddr*)addrAr->ai_addr, size)==-1)//addrAr->ai_addrlen
-                err("sendto()");
+        if(strcmp("", channelName) != 0)
+        {
+            strcpy(say->req_channel, channelName);//copy channel name into usable format
+            strcpy(say->req_text, buf);
+            int size = sizeof(struct sockaddr);
+            if (sendto(sockfd, say, sizeof(*say), 0, (struct sockaddr*)addrAr->ai_addr, size)==-1)//addrAr->ai_addrlen
+                    err("sendto()");
+        }
         delete say;
     }
     return 1;
