@@ -211,15 +211,15 @@ int sayReq(struct request_say *rs)
         cout << "this is address in loop of say " << ad.first << " and " << ad.second << "\n";
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
         //move ad to t (address)
-        strncpy(s, ad.second.c_str(), strlen(ad.second.c_str()));
+        strncpy(s, ad.first.c_str(), strlen(ad.first.c_str()));
         //from s to address and format
-        inet_pton(AF_INET, s, &address);
+        inet_pton(AF_INET, s, &(address->sin_addr);
         multimap<string,int>::iterator addrToPit = addrToPort.find(ad.first);
         cout << "port as is: " << addrToPit->second << " \n";
         address->sin_port = addrToPit->second;
         cout << "PPPPPBBbb___port as is: " << address->sin_port << " \n";
         address->sin_family = AF_INET;
-        address->sin_addr = addrToPit->first;
+        //address->sin_addr = addrToPit->first;
         //struct sockaddr* realAddr = (sockaddr*)address;
         //char *p= (char*) malloc(sizeof(char)*BUFLEN);
         //strncpy(p, ad.second.c_str(), strlen(ad.second.c_str()));
