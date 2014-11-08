@@ -138,9 +138,9 @@ string getAddrString()
     struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
     char *tmp = (char*)malloc(sizeof(char)*BUFLEN);
     //make address string
-    inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
+    inet_ntop(AF_INET, &(address->sin_addr), tmp, BUFLEN);
     //have tmp var
-    string realAddrString = addrString;
+    string realAddrString = tmp;
     free (tmp);
     return realAddrString;
 }
@@ -240,7 +240,6 @@ int loginReq(struct request_login *rl)
     //this is our readable address
     string realAddrString = getAddrString();
     cout << "this is the real addr string in login: " << realAddrString << "\n";
-    free (addrString);
     //look for address in addrToUser
     map<string, string>::iterator hit = addrToUser.find(realAddrString);
     if(hit != addrToUser.end()) {
