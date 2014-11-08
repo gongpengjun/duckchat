@@ -204,8 +204,8 @@ int sayReq(struct request_say *rs)
         //from s to address and format
         inet_pton(AF_INET, s, &address);
         multimap<string,int>::iterator addrToPit = addrToPort.find(ad.first);
-        address.sin_port = addrToPit->second;
-        address.sin_family = AF_INET;
+        address->sin_port = addrToPit->second;
+        address->sin_family = AF_INET;
         //struct sockaddr* realAddr = (sockaddr*)address;
         //char *p= (char*) malloc(sizeof(char)*BUFLEN);
         //strncpy(p, ad.second.c_str(), strlen(ad.second.c_str()));
@@ -220,7 +220,7 @@ int sayReq(struct request_say *rs)
         strncpy(msg->txt_channel, channel.c_str(), CHANNEL_MAX);
         //send message
         int size = sizeof(struct sockaddr*);
-        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, (sockaddr*)&address, size);
+        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, (sockaddr*)address, size);
         if (res == -1) {
             cout << "sendto very badd \n";
             return -1;
