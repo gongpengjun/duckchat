@@ -138,7 +138,7 @@ int getAddr_Port() {
     //inet_ntop(AF_INET, &(address->sin_port), addrString, BUFLEN);
     //have tmp var
     
-    int realAddrString = htons(&(address->sin_port));
+    int realAddrString = (int)htons((uint16_t)&(address->sin_port));
     //free (addrString);
     return realAddrString;
 }
