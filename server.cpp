@@ -465,6 +465,7 @@ int readRequestType(struct request *r, int b)
     return fin;
 }
 
+
 int connectToSocket(char* ip, char* port)
 {
     struct addrinfo addressTmp;
