@@ -144,14 +144,13 @@ int checkValidAddr(struct request *r)
     string realAddrString = addrString;
     free (addrString);
     //look in map for address
-    string aTmp = addrToUser[realAddrString];
-    if(aTmp != "") {
-        //valid addr and user
-        //may need to change addr
-        return 0;
-    } else {
+    //string aTmp = addrToUser[realAddrString];
+    map<string,string>::iterator it = addrToUser.find(realAddrString);
+    if(it == addrToUser.end()) {
+        cout << "super baddd addressss mann\n";
         return -1;
-    }
+    } 
+    return 0;
 }
 //for errors
 void err(char *str)
