@@ -215,7 +215,7 @@ int sayReq(struct request_say *rs)
         cout << ad.second << " which that should be 0 and " << ad.first << " is 127\n"; 
         //from s to address and format
         inet_pton(AF_INET, s, &address);
-        struct sockaddr_in* addrSEND = address;
+        struct sockaddr_in* addrSEND = (struct sockaddr_in*)address;
         multimap<string,int>::iterator addrToPit = addrToPort.find(ad.first);
         cout << "port as is: " << addrToPit->second << " \n";
         addrSEND->sin_port = addrToPit->second;
