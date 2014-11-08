@@ -411,7 +411,7 @@ int logoutReq(struct request_logout *rl)
     multimap<pair<string,string>, string>::iterator i;
     for(i=addrToUser.begin(); i!=addrToUser.end(); i++) {
         if(i->second == username) {
-            tmpaddr = i->first;
+            tmpaddr = i->first.first;
             addrToUser.erase(i);
         }
     }
