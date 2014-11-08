@@ -538,7 +538,7 @@ int listReq(struct request_list *rl)
     //from s to address and format
     inet_pton(AF_INET, s, &address);
     //setup message to send
-    struct text_list *msg= (struct text_list*) malloc(sizeof(struct text_list) + channels.size()*sizeof(struct channel_info));
+    struct text_list *msg= (struct text_list*) malloc(sizeof(struct text_list) + BUFLEN);
     //set message type
     msg->txt_type= htonl(TXT_LIST);
     //add username (from) and message 
