@@ -1,6 +1,8 @@
 //UDPServer.c
  
-/*
+/*  login = works
+    logout = works
+    
  *  gcc -o server UDPServer.c
  *  ./server
  */
