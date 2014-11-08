@@ -18,7 +18,6 @@
 #include <string>
 #include <map>
 #include <tuple>
-#include <pair>
 #include <vector>
 #include "duckchat.h"
 //defined
