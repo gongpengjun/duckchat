@@ -221,6 +221,7 @@ int loginReq(struct request_login *rl)
     inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
     //this is our readable address
     string realAddrString = addrString;
+    cout << "this is the real addr string in login: " << realAddrString << "\n";
     free (addrString);
     //look for address in addrToUser
     map<string, string>::iterator hit = addrToUser.find(realAddrString);
