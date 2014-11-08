@@ -180,19 +180,19 @@ int sayReq(struct request_say *rs)
     for(int i=0; i<tmpU.size(); i++) {
         cout << "user: " << tmpU[i] << " on channel: " << channel << "\n";
         //get address of current user
-        struct sockaddr_in* address;
+        struct sockaddr* address;
         multimap<string, pair<string,string> >::iterator ui = userToAddr.find(tmpU[i]);
         pair<string,string> ad = ui->second;
         cout << "this is address in loop of say " << ad.first << " and " << ad.second << "\n";
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
         //move ad to t (address)
-        strncpy(s, ad.first.c_str(), strlen(ad.first.c_str()));
+        strncpy(s, ad.second.c_str(), strlen(ad.second.c_str()));
         //from s to address and format
-        inet_pton(AF_INET, s, &(address->sin_addr));
-        struct sockaddr* realAddr = (sockaddr*)address;
-        char *p= (char*) malloc(sizeof(char)*BUFLEN);
-        strncpy(p, ad.second.c_str(), strlen(ad.second.c_str()));
-        inet_pton(AF_INET, p, &realAddr);
+        inet_pton(AF_INET, s, &address);
+        //struct sockaddr* realAddr = (sockaddr*)address;
+        //char *p= (char*) malloc(sizeof(char)*BUFLEN);
+        //strncpy(p, ad.second.c_str(), strlen(ad.second.c_str()));
+        //inet_pton(AF_INET, p, &realAddr);
         //setup message to send
         struct text_say *msg= (struct text_say*) malloc(sizeof(struct text_say));
         //set message type
@@ -203,7 +203,7 @@ int sayReq(struct request_say *rs)
         strncpy(msg->txt_channel, channel.c_str(), CHANNEL_MAX);
         //send message
         int size = sizeof(struct sockaddr);
-        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, realAddr, size);
+        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, address, size);
         if (res == -1) {
             cout << "sendto very badd \n";
             return -1;
