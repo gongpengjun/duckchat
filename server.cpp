@@ -133,6 +133,16 @@ string getAddr_string() {
 }
 //returns string form of address
 int getAddr_Port() {
+    // //new request address info
+    // struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
+    // //char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
+    // //make address string
+    // //inet_ntop(AF_INET, &(address->sin_port), addrString, BUFLEN);
+    // //have tmp var
+    
+    // int realAddrString = address->sin_port;
+    // //free (addrString);
+    // return realAddrString;
     //new request address info
     struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
     //char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
@@ -140,7 +150,7 @@ int getAddr_Port() {
     //inet_ntop(AF_INET, &(address->sin_port), addrString, BUFLEN);
     //have tmp var
     
-    int realAddrString = address->sin_port;
+    int realAddrString = htons(address->sin_port);
     //free (addrString);
     return realAddrString;
 }
@@ -206,7 +216,7 @@ int sayReq(struct request_say *rs)
         inet_pton(AF_INET, s, &address);
         multimap<string,int>::iterator addrToPit = addrToPort.find(ad.first);
         cout << "port as is: " << addrToPit->second << " \n";
-        address->sin_port = htonl(addrToPit->second);
+        address->sin_port = addrToPit->second;
         cout << "PPPPPBBbb___port as is: " << address->sin_port << " \n";
         address->sin_family = AF_INET;
         //struct sockaddr* realAddr = (sockaddr*)address;
