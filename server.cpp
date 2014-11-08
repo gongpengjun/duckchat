@@ -331,35 +331,35 @@ int logoutReq(struct request_logout *rl)
     map<string,string>::iterator it;
     //delete address and user in both maps and both channe maps
     //look for address
-    map<string, string>::iterator hit = addrToUser.find(realAddrString);
-    if(hit != addrToUser.end()) {
-        addrToUser.erase(realAddrString);
-    }
-    // look for use
-    hit = userToAddr.find(username);
-    if(hit != userToAddr.end()) {
-        userToAddr.erase(username);
-    }
-    // look for user in channel listen
-    map<string, vector<string> >::iterator git = usrLisChan.find(username);
-    if(git != usrLisChan.end()) {
-        usrLisChan.erase(username);
-    }
-    //look for user in channel talk
-    git = usrTlkChan.find(username);
-    if(git != usrTlkChan.end()) {
-        usrTlkChan.erase(username);
-    }
-    //erase user on channels in chanTlkUser
-    for(int i=0; i<channels.size(); i++) {
-        map<string,vector<string> >::iterator it = chanTlkUser.find(channels[i]);
-        vector<string> usersC = it->second;
-        for(int j=0; j<usersC.size(); j++) {
-            if(usersC[j] == username) {
-                usersC.erase(usersC.begin()+j);
-            }
-        }
-    }
+    // map<string, string>::iterator hit = addrToUser.find(realAddrString);
+    // if(hit != addrToUser.end()) {
+    //     addrToUser.erase(realAddrString);
+    // }
+    // // look for use
+    // hit = userToAddr.find(username);
+    // if(hit != userToAddr.end()) {
+    //     userToAddr.erase(username);
+    // }
+    // // look for user in channel listen
+    // map<string, vector<string> >::iterator git = usrLisChan.find(username);
+    // if(git != usrLisChan.end()) {
+    //     usrLisChan.erase(username);
+    // }
+    // //look for user in channel talk
+    // git = usrTlkChan.find(username);
+    // if(git != usrTlkChan.end()) {
+    //     usrTlkChan.erase(username);
+    // }
+    // //erase user on channels in chanTlkUser
+    // for(int i=0; i<channels.size(); i++) {
+    //     map<string,vector<string> >::iterator it = chanTlkUser.find(channels[i]);
+    //     vector<string> usersC = it->second;
+    //     for(int j=0; j<usersC.size(); j++) {
+    //         if(usersC[j] == username) {
+    //             usersC.erase(usersC.begin()+j);
+    //         }
+    //     }
+    // }
     //delete user and channel stuff
     //it = usrLisChan.find(user);
     //usrLisChan.erase(it);
