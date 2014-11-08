@@ -49,32 +49,6 @@ int main(int argc, char **argv)
     connectToSocket(argv[1], argv[2]);
     while(1)
     {
-        //print stuff
-            map<string,string>::iterator it;
-            if(!addrToUser.empty()) {
-                cout << "SIZE OF AtoU: " << addrToUser.size() << "\n";
-                for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
-                            cout << it->first << " is the address.\n";
-                            cout << it->second << " is the user.\n";
-                }  
-            }
-            map<string,string>::iterator its;
-            if(!userToAddr.empty()) {
-                cout << "SIZE OF UtoA: " << userToAddr.size() << "\n";
-                for(its = userToAddr.begin(); its != userToAddr.end(); its++) {
-                    cout << its->first << " is the user.\n";
-                    cout << its->second << " is the addrr.\n";
-                }
-            } 
-            for(int i=0; i<channels.size(); i++) {
-                vector<string> uOnC = chanTlkUser[channels[i]];
-                if(!uOnC.empty()) {
-                    for(int j=0; j<uOnC.size(); j++) {
-                        cout << uOnC[j] << " is user on channel: " << channels[i] << " from chanTlkUser.\n";
-                    }
-                }
-                chanTlkUser[channels[i]] = uOnC;
-            }   
         //for multiple requests maybe
         // requests = (struct request*) malloc(sizeof (struct request) + BUFLEN); 
         char *buf = new char[BUFLEN];
@@ -101,16 +75,7 @@ int main(int argc, char **argv)
                     cout << its->first << " is the user.\n";
                     cout << its->second << " is the addrr.\n";
                 }
-            } 
-            for(int i=0; i<channels.size(); i++) {
-                vector<string> uOnC = chanTlkUser[channels[i]];
-                if(!uOnC.empty()) {
-                    for(int j=0; j<uOnC.size(); j++) {
-                        cout << uOnC[j] << " is user on channel: " << channels[i] << " from chanTlkUser.\n";
-                    }
-                }
-                chanTlkUser[channels[i]] = uOnC;
-            }   
+            }    
         } 
        requests = NULL;
        delete[] buf;   
@@ -144,22 +109,14 @@ int checkValidAddr(struct request *r)
     string realAddrString = addrString;
     free (addrString);
     //look in map for address
-    //string aTmp = addrToUser[realAddrString];
-    map<string,string>::iterator it;
-    if(!addrToUser.empty()) {
-        cout << "SIZE OF AtoU: " << addrToUser.size() << "\n";
-        for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
-                    cout << it->first << " is the address.\n";
-                    cout << it->second << " is the user.\n";
-        }  
-    }
-    it = addrToUser.find(realAddrString);
-    if(it == addrToUser.end()) {
-        cout << "super baddd addressss mann\n";
-        cout << realAddrString << " that THING\n";
+    string aTmp = addrToUser[realAddrString];
+    if(aTmp != "") {
+        //valid addr and user
+        //may need to change addr
+        return 0;
+    } else {
         return -1;
-    } 
-    return 0;
+    }
 }
 //for errors
 void err(char *str)
@@ -188,11 +145,10 @@ int sayReq(struct request_say *rs)
     //for all users on the channel
         //write the message to those users by there address
     for(int i=0; i<tmpU.size(); i++) {
-        cout << "user: " << tmpU[i] << " on channel: " << channel << "\n";
+        cout << "user: " << username << " on channel: " << tmpU[i] << "\n";
         //get address of current user
         struct sockaddr_in address;
         string ad = userToAddr[tmpU[i]];
-        cout << ad << " POOP that is addeess\n";
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
         //move ad to t (address)
         strncpy(s, ad.c_str(), strlen(ad.c_str()));
@@ -230,7 +186,6 @@ int loginReq(struct request_login *rl)
     inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
     //this is our readable address
     string realAddrString = addrString;
-    cout << "this is the real addr string in login: " << realAddrString << "\n";
     free (addrString);
     //look for address in addrToUser
     map<string, string>::iterator hit = addrToUser.find(realAddrString);
@@ -267,8 +222,6 @@ int loginReq(struct request_login *rl)
 
     cout << "username in login req: " << username << "\n";
     cout << "address in login req: " << realAddrString << "\n";
-    // addrToUser.insert(pair<string, string>(realAddrString, username));
-    // userToAddr.insert(pair<string, string>(username, realAddrString));
     addrToUser[realAddrString] = username;
     userToAddr[username] = realAddrString;
     return 0;
@@ -385,7 +338,6 @@ int readRequestType(struct request *r, int b)
        netHost = r->req_type;
     }
     //check if request address is valid
-    cout << netHost << " this is the request type!!!! \n";
     if(netHost != 0) {
         if(checkValidAddr(r) == -1) {
             //bad address, return
