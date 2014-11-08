@@ -78,7 +78,7 @@ int main(int argc, char **argv)
         //for multiple requests maybe
         // requests = (struct request*) malloc(sizeof (struct request) + BUFLEN); 
         char *buf = new char[BUFLEN];
-        struct request *requests;  
+	    struct request *requests;  
         int bal = 0;
         bal = recvfrom(sockfd, buf, BUFLEN, 0, (struct sockaddr*)&recAddr, &fromlen);
         if(bal > 0) {
@@ -86,22 +86,22 @@ int main(int argc, char **argv)
             requests = (request*) buf;
             readRequestType(requests, bal);  
             //print stuff
-            map<string,string>::iterator it;
+	        map<string,string>::iterator it;
             if(!addrToUser.empty()) {
                 cout << "SIZE OF AtoU: " << addrToUser.size() << "\n";
-                for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
+        		for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
                             cout << it->first << " is the address.\n";
                             cout << it->second << " is the user.\n";
                 }  
-            }
+        	}
             map<string,string>::iterator its;
-            if(!userToAddr.empty()) {
+    	    if(!userToAddr.empty()) {
                 cout << "SIZE OF UtoA: " << userToAddr.size() << "\n";
                 for(its = userToAddr.begin(); its != userToAddr.end(); its++) {
                     cout << its->first << " is the user.\n";
                     cout << its->second << " is the addrr.\n";
                 }
-            } 
+    	    } 
             for(int i=0; i<channels.size(); i++) {
                 vector<string> uOnC = chanTlkUser[channels[i]];
                 if(!uOnC.empty()) {
@@ -192,7 +192,6 @@ int sayReq(struct request_say *rs)
         //get address of current user
         struct sockaddr_in address;
         string ad = userToAddr[tmpU[i]];
-        cout << ad << " POOP that is addeess\n";
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
         //move ad to t (address)
         strncpy(s, ad.c_str(), strlen(ad.c_str()));
@@ -207,7 +206,7 @@ int sayReq(struct request_say *rs)
         strncpy(msg->txt_text, message.c_str(), SAY_MAX);
         strncpy(msg->txt_channel, channel.c_str(), CHANNEL_MAX);
         //send message
-        size_t size = sizeof(struct sockaddr_in);
+	    size_t size = sizeof(struct sockaddr_in);
         int res= sendto(sockfd, msg, sizeof(struct text_say), 0, (struct sockaddr*)&address, size);
         if (res == -1) {
             cout << "sendto very badd \n";
@@ -394,7 +393,7 @@ int readRequestType(struct request *r, int b)
         } 
     }
     switch(netHost) {
-    //printf("the value isss: %s \n", ntohl(r->req_type));
+	//printf("the value isss: %s \n", ntohl(r->req_type));
         case REQ_LOGIN:
             if(sizeof(struct request_login) == b) {
                 cout << "login request\n";
@@ -414,7 +413,7 @@ int readRequestType(struct request *r, int b)
                 break;
             }   
         case REQ_JOIN:
-            //printf("join case made \n");
+		    //printf("join case made \n");
             if(sizeof(struct request_join) == b) {
                 cout << "join request\n";
                 fin = joinReq((struct request_join*) r);
