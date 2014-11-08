@@ -148,6 +148,7 @@ int checkValidAddr(struct request *r)
     map<string,string>::iterator it = addrToUser.find(realAddrString);
     if(it == addrToUser.end()) {
         cout << "super baddd addressss mann\n";
+        cout << realAddrString << " that THING\n";
         return -1;
     } 
     return 0;
@@ -220,6 +221,7 @@ int loginReq(struct request_login *rl)
     inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
     //this is our readable address
     string realAddrString = addrString;
+    cout << "this is the real addr string in login: " << realAddrString << "\n";
     free (addrString);
     //look for address in addrToUser
     map<string, string>::iterator hit = addrToUser.find(realAddrString);
@@ -256,8 +258,10 @@ int loginReq(struct request_login *rl)
 
     cout << "username in login req: " << username << "\n";
     cout << "address in login req: " << realAddrString << "\n";
-    addrToUser[realAddrString] = username;
-    userToAddr[username] = realAddrString;
+    addrToUser.insert(pair<string, string>(realAddrString, username));
+    userToAddr.insert(pair<string, string>(username, realAddrString));
+    // addrToUser[realAddrString] = username;
+    // userToAddr[username] = realAddrString;
     return 0;
 }
 //handle login requests
