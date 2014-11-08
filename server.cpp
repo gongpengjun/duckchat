@@ -227,7 +227,7 @@ int sayReq(struct request_say *rs)
         strncpy(msg->txt_channel, channel.c_str(), CHANNEL_MAX);
         //send message
         int size = sizeof(struct sockaddr);
-        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, recAddr, size);
+        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, realAddr, size);
         if (res == -1) {
             cout << "sendto very badd \n";
             return -1;
@@ -250,8 +250,8 @@ int loginReq(struct request_login *rl)
     cout << "address in login req: " << realAddrString << "\n";
     //add address and username to map
     string smiAddr = getSemiAddr_string();
-    addrToUser.insert(pair<pair<string,string>, string>(pair<string,string>(realAddrString,smiAddr), username));
-    userToAddr.insert(pair<string, pair<pair<string,string> >(username, pair<string,string>(realAddrString,smiAddr)));
+    addrToUser.insert(pair<pair<string,string>,string>(pair<string,string>(realAddrString,smiAddr), username));
+    userToAddr.insert(pair<string,pair<string,string> >(username, pair<string,string>(realAddrString,smiAddr)));
     //add user to common
     map<string,vector<string> >::iterator it = chanTlkUser.find("Common");
     vector<string> usersC;
