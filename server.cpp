@@ -443,9 +443,12 @@ int logoutReq(struct request_logout *rl)
         vector<string> usersC = it->second;
         for(int j=0; j<usersC.size(); j++) {
             if(usersC[j] == username) {
+                cout << "deleting user: " << usersC[j] << " \n";
                 usersC.erase(usersC.begin()+j);
             }
         }
+        chanTlkUser.erase(it);
+        chanTlkUser.insert(pair<string,vector<string> >(channels[i],usersC))
     }
     // it = usrLisChan.find(user);
     // usrLisChan.erase(it);
