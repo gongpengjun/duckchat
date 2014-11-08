@@ -249,6 +249,8 @@ int sayReq(struct request_say *rs)
         string ad = tad.second;
         cout << tad.second << " LISTEN MANN\n";
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
+        multimap<string,int>::iterator addrToPit = addrToPort.find(ad.first);
+        cout << "portPARIS as is: " << addrToPit->second << " \n";
         //move ad to t (address)
         strncpy(s, ad.c_str(), strlen(ad.c_str()));
         //from s to address and format
