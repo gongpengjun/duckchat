@@ -148,6 +148,7 @@ int checkValidAddr(struct request *r)
     map<string,string>::iterator it = addrToUser.find(realAddrString);
     if(it == addrToUser.end()) {
         cout << "super baddd addressss mann\n";
+        cout << realAddrString << " that THING\n";
         return -1;
     } 
     return 0;
