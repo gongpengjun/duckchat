@@ -254,13 +254,13 @@ int loginReq(struct request_login *rl)
     cout << "this spot 3 \n";
     addrToUser.insert(pair<pair<string,string>,string>(pair<string,string>(realAddrString,smiAddr), username));
     userToAddr.insert(pair<string,pair<string,string> >(username, pair<string,string>(realAddrString,smiAddr)));
-    map<pair<string,string>,string>::iterator it;
+    map<pair<string,string>,string>::iterator mit;
     if(!addrToUser.empty()) {
         cout << "SIZE OF AtoU: " << addrToUser.size() << "\n";
-        for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
-                    cout << it->first.first << " is the complex address.\n";
-                    cout << it->first.second << " is the simple address.\n";
-                    cout << it->second << " is the user.\n";
+        for(mit = addrToUser.begin(); mit != addrToUser.end(); mit++) {
+                    cout << mit->first.first << " is the complex address.\n";
+                    cout << mit->first.second << " is the simple address.\n";
+                    cout << mit->second << " is the user.\n";
         }  
     }
     map<string,pair<string,string> >::iterator its;
