@@ -229,15 +229,16 @@ int sayReq(struct request_say *rs)
 //handle login requests
 int loginReq(struct request_login *rl)
 {
+
     //new request address info
-    struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
+    //struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
     //username
     string username = rl->req_username;
-    char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
-    //make address string
-    inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
+    // char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
+    // //make address string
+    // inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
     //this is our readable address
-    string realAddrString = addrString;
+    string realAddrString = getAddrString();
     cout << "this is the real addr string in login: " << realAddrString << "\n";
     free (addrString);
     //look for address in addrToUser
