@@ -212,7 +212,7 @@ int sayReq(struct request_say *rs)
         //move ad to t (address)
         strncpy(s, ad.first.c_str(), strlen(ad.first.c_str()));
         //from s to address and format
-        inet_pton(AF_INET, s, &(address.sin_addr));
+        inet_pton(AF_INET, s, &(address->sin_addr));
         struct sockaddr* realAddr = (sockaddr*)address;
         char *p= (char*) malloc(sizeof(char)*BUFLEN);
         strncpy(p, ad.second.c_str(), strlen(ad.second.c_str()));
