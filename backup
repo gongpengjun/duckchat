@@ -120,17 +120,20 @@ int main(int argc, char **argv)
 }
 //returns string of username of current request address
 string getReqAddr()
-{ 
-    string realAddrString = getAddr_string();
-    string aTmp = addrToUser[realAddrString];
-    if(aTmp == "") {
-        return "empty";
-    }
-    return aTmp;
-}
-//returns string form of address
-string getAddr_string() {
+{
     //new request address info
+    struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
+    char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
+    //make address string
+    inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
+    //have tmp var
+    string realAddrString = addrString;
+    free (addrString);
+    string aTmp = addrToUser[realAddrString];
+    return aTmp;
+
+}
+string getAddr_string() {
     struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
     char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
     //make address string
@@ -143,14 +146,14 @@ string getAddr_string() {
 //check if current request address is valid or exist in map
 int checkValidAddr(struct request *r) 
 {
-    //OLD CODE //new request address info
-    // struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
-    // char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
-    // //make address string
-    // inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
-    // //have tmp var
-    string realAddrString = getAddr_string();
-    //free (addrString);
+    //new request address info
+    struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
+    char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
+    //make address string
+    inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
+    //have tmp var
+    string realAddrString = addrString;
+    free (addrString);
     //look in map for address
     //string aTmp = addrToUser[realAddrString];
     map<string,string>::iterator it = addrToUser.find(realAddrString);
@@ -220,39 +223,37 @@ int sayReq(struct request_say *rs)
 //handle login requests
 int loginReq(struct request_login *rl)
 {
-    // OLD CODE//new request address info
-    // struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
-    
-    // char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
-    // //make address string
-    // inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
-    // //this is our readable address
-    // string realAddrString = addrString;
-    string realAddrString = getAddr_string();
+    //new request address info
+    struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
     //username
     string username = rl->req_username;
+    char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
+    //make address string
+    inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
+    //this is our readable address
+    string realAddrString = addrString;
     cout << "this is the real addr string in login: " << realAddrString << "\n";
-    //free (addrString);
+    free (addrString);
     //look for address in addrToUser
-    //__OLD_CODE__ map<string, string>::iterator hit = addrToUser.find(realAddrString);
-    // if(hit != addrToUser.end()) {
-    //     addrToUser.erase(realAddrString);
-    // }
-    // // look for use in userToAddr
-    // hit = userToAddr.find(username);
-    // if(hit != userToAddr.end()) {
-    //     userToAddr.erase(username);
-    // }
-    // // look for users in channel listen usrLisChan
-    // map<string, vector<string> >::iterator git = usrLisChan.find(username);
-    // if(git != usrLisChan.end()) {
-    //     usrLisChan.erase(username);
-    // }
-    // //look for users in channel talk usrTlkChan
-    // git = usrTlkChan.find(username);
-    // if(git != usrTlkChan.end()) {
-    //     usrTlkChan.erase(username);
-    // }
+    map<string, string>::iterator hit = addrToUser.find(realAddrString);
+    if(hit != addrToUser.end()) {
+        addrToUser.erase(realAddrString);
+    }
+    // look for use in userToAddr
+    hit = userToAddr.find(username);
+    if(hit != userToAddr.end()) {
+        userToAddr.erase(username);
+    }
+    // look for users in channel listen usrLisChan
+    map<string, vector<string> >::iterator git = usrLisChan.find(username);
+    if(git != usrLisChan.end()) {
+        usrLisChan.erase(username);
+    }
+    //look for users in channel talk usrTlkChan
+    git = usrTlkChan.find(username);
+    if(git != usrTlkChan.end()) {
+        usrTlkChan.erase(username);
+    }
     //for all channels, if there is a user in the channels talk user list chanTlkUser[i] then erase the user from the chanTlkUser and add it back to channels talk user list chanTlkUser[i]
     for(int i=0; i<channels.size(); i++) {
         vector<string> uOnC = chanTlkUser[channels[i]];
