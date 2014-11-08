@@ -247,6 +247,7 @@ int sayReq(struct request_say *rs)
         multimap<string, pair<string,string> >::iterator ui = userToAddr.find(tmpU[i]);
         pair<string,string> tad = ui->second;
         string ad = tad.second;
+        cout << tad.second << " LISTEN MANN\n";
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
         //move ad to t (address)
         strncpy(s, ad.c_str(), strlen(ad.c_str()));
