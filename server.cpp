@@ -40,7 +40,6 @@ int readRequestType(struct request*, int);
 int sayReq(struct request_say*);
 int checkValidAddr();
 string getReqAddr();
-string getAddrString(); 
 
 //program
 int main(int argc, char **argv)
@@ -133,39 +132,23 @@ string getReqAddr()
     return aTmp;
 
 }
-string getAddrString() 
-{
-    struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
-    char *tmp = (char*)malloc(sizeof(char)*BUFLEN);
-    //make address string
-    inet_ntop(AF_INET, &(address->sin_addr), tmp, BUFLEN);
-    //have tmp var
-    string realAddrString = tmp;
-    free (tmp);
-    return realAddrString;
-}
 //check if current request address is valid or exist in map
 int checkValidAddr(struct request *r) 
 {
     //new request address info
-    string realAddrString = getAddrString();
-    cout << realAddrString << " : Jack look at this ADDRESSS\n"; 
+    struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
+    char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
+    //make address string
+    inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
+    //have tmp var
+    string realAddrString = addrString;
+    free (addrString);
     //look in map for address
     //string aTmp = addrToUser[realAddrString];
-    //prints stuff
-    map<string,string>::iterator it;
-    //if(!addrToUser.empty()) {
-        cout << "SIZE OF AtoU: " << addrToUser.size() << "\n";
-        for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
-                    cout << it->first << " is the address.\n";
-                    cout << it->second << " is the user.\n";
-        }  
-    //}
-    it = addrToUser.find(realAddrString);
+    map<string,string>::iterator it = addrToUser.find(realAddrString);
     if(it == addrToUser.end()) {
         cout << "super baddd addressss mann\n";
-        cout << it->first << " that THING\n";
-        cout << "holy moly " << it->second << "\n";
+        cout << realAddrString << " that THING\n";
         return -1;
     } 
     return 0;
@@ -229,17 +212,17 @@ int sayReq(struct request_say *rs)
 //handle login requests
 int loginReq(struct request_login *rl)
 {
-
     //new request address info
-    //struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
+    struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
     //username
     string username = rl->req_username;
-    // char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
-    // //make address string
-    // inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
+    char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
+    //make address string
+    inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
     //this is our readable address
-    string realAddrString = getAddrString();
+    string realAddrString = addrString;
     cout << "this is the real addr string in login: " << realAddrString << "\n";
+    free (addrString);
     //look for address in addrToUser
     map<string, string>::iterator hit = addrToUser.find(realAddrString);
     if(hit != addrToUser.end()) {
@@ -275,10 +258,10 @@ int loginReq(struct request_login *rl)
 
     cout << "username in login req: " << username << "\n";
     cout << "address in login req: " << realAddrString << "\n";
-    // addrToUser.insert(pair<string, string>(realAddrString, username));
-    // userToAddr.insert(pair<string, string>(username, realAddrString));
-    addrToUser[realAddrString] = username;
-    userToAddr[username] = realAddrString;
+    addrToUser.insert(pair<string, string>(realAddrString, username));
+    userToAddr.insert(pair<string, string>(username, realAddrString));
+    // addrToUser[realAddrString] = username;
+    // userToAddr[username] = realAddrString;
     return 0;
 }
 //handle login requests
