@@ -191,6 +191,7 @@ int sayReq(struct request_say *rs)
     string channel = rs->req_channel;
     string message = rs->req_text;
     string username = getUserOfCurrAddr();
+    cout << "Username fromuser: " << username << "\n";
     //cout << "this is username in sayReq " << username << "\n";
     //get list of users on channel from usrLisChan
     //vector<string> tmpU = usrLisChan[username];
