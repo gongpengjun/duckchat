@@ -406,43 +406,44 @@ int logoutReq(struct request_logout *rl)
     //have tmp var
     string realAddrString = getAddr_string();
     string username = getUserOfCurrAddr();
-    map<string,string>::iterator it;
-    //delete address and user in both maps and both channe maps
-    //look for address
-    // map<string, string>::iterator hit = addrToUser.find(realAddrString);
-    // if(hit != addrToUser.end()) {
-    //     addrToUser.erase(realAddrString);
-    // }
-    // // look for use
-    // hit = userToAddr.find(username);
-    // if(hit != userToAddr.end()) {
-    //     userToAddr.erase(username);
-    // }
-    // // look for user in channel listen
-    // map<string, vector<string> >::iterator git = usrLisChan.find(username);
-    // if(git != usrLisChan.end()) {
-    //     usrLisChan.erase(username);
-    // }
-    // //look for user in channel talk
-    // git = usrTlkChan.find(username);
-    // if(git != usrTlkChan.end()) {
-    //     usrTlkChan.erase(username);
-    // }
-    // //erase user on channels in chanTlkUser
-    // for(int i=0; i<channels.size(); i++) {
-    //     map<string,vector<string> >::iterator it = chanTlkUser.find(channels[i]);
-    //     vector<string> usersC = it->second;
-    //     for(int j=0; j<usersC.size(); j++) {
-    //         if(usersC[j] == username) {
-    //             usersC.erase(usersC.begin()+j);
-    //         }
-    //     }
-    // }
-    //delete user and channel stuff
-    //it = usrLisChan.find(user);
-    //usrLisChan.erase(it);
-    //it = usrTlkChan.find(user);
-    //usrTlkChan.erase(it);
+
+    //pair<string,string> realAddrString (getAddr_string(),getSemiAddr_string());
+    multimap<pair<string,string>, string>::iterator i;
+    for(i=addrToUser.begin(); i<addrToUser.end(); i++) {
+        if(i->second == username) {
+            addrToUser.erase(i);
+        }
+    }
+    multimap<string, pair<string,string> >::iterator ii;
+    for(ii=userToAddr.begin(); ii<userToAddr.end(); ii++) {
+        if(ii->first == username) {
+            userToAddr.erase(i);
+        }
+    }
+    // look for user in channel listen
+    map<string, vector<string> >::iterator git = usrLisChan.find(username);
+    if(git != usrLisChan.end()) {
+        usrLisChan.erase(username);
+    }
+    //look for user in channel talk
+    git = usrTlkChan.find(username);
+    if(git != usrTlkChan.end()) {
+        usrTlkChan.erase(username);
+    }
+    //erase user on channels in chanTlkUser
+    for(int i=0; i<channels.size(); i++) {
+        map<string,vector<string> >::iterator it = chanTlkUser.find(channels[i]);
+        vector<string> usersC = it->second;
+        for(int j=0; j<usersC.size(); j++) {
+            if(usersC[j] == username) {
+                usersC.erase(usersC.begin()+j);
+            }
+        }
+    }
+    // it = usrLisChan.find(user);
+    // usrLisChan.erase(it);
+    // it = usrTlkChan.find(user);
+    // usrTlkChan.erase(it);
     return 0;
 }
 //handle login requests
