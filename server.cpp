@@ -266,10 +266,10 @@ int loginReq(struct request_login *rl)
 
     cout << "username in login req: " << username << "\n";
     cout << "address in login req: " << realAddrString << "\n";
-    // addrToUser.insert(pair<string, string>(realAddrString, username));
-    // userToAddr.insert(pair<string, string>(username, realAddrString));
-    addrToUser[realAddrString] = username;
-    userToAddr[username] = realAddrString;
+    addrToUser.insert(pair<string, string>(realAddrString, username));
+    userToAddr.insert(pair<string, string>(username, realAddrString));
+    // addrToUser[realAddrString] = username;
+    // userToAddr[username] = realAddrString;
     return 0;
 }
 //handle login requests
