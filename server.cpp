@@ -154,13 +154,13 @@ int checkValidAddr(struct request *r)
     //string aTmp = addrToUser[realAddrString];
     //prints stuff
     map<string,string>::iterator it;
-    if(!addrToUser.empty()) {
+    //if(!addrToUser.empty()) {
         cout << "SIZE OF AtoU: " << addrToUser.size() << "\n";
         for(it = addrToUser.begin(); it != addrToUser.end(); it++) {
                     cout << it->first << " is the address.\n";
                     cout << it->second << " is the user.\n";
         }  
-    }
+    //}
     it = addrToUser.find(realAddrString);
     if(it == addrToUser.end()) {
         cout << "super baddd addressss mann\n";
