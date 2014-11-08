@@ -351,7 +351,7 @@ int joinReq(struct request_join *rj)
     if(it == chanTlkUser.end()) {
         //NEW CHANNEL
         //chanTlkUser.insert(pair<string,vector<string> >("Common", usersC));
-        usersC.insert(usersC.begin(), username);
+        usersC.insert(usersC.begin(), user);
         chanTlkUser.insert(pair<string,vector<string> >(chan, usersC));
         channels.push_back(chan);
 
