@@ -263,7 +263,7 @@ int loginReq(struct request_login *rl)
                     cout << it->second << " is the user.\n";
         }  
     }
-    map<string,pair<string,string>>::iterator its;
+    map<string,pair<string,string> >::iterator its;
     if(!userToAddr.empty()) {
         cout << "SIZE OF UtoA: " << userToAddr.size() << "\n";
         for(its = userToAddr.begin(); its != userToAddr.end(); its++) {
