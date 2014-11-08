@@ -39,7 +39,7 @@ void err(char*);
 int readRequestType(struct request*, int);
 int sayReq(struct request_say*);
 int checkValidAddr();
-string getReqAddr();
+string getUserOfCurrAddr();
 string getAddr_string();
 
 //program
@@ -119,7 +119,7 @@ int main(int argc, char **argv)
     return 0;
 }
 //returns string of username of current request address
-string getReqAddr()
+string getUserOfCurrAddr()
 { 
     string realAddrString = getAddr_string();
     string aTmp = addrToUser[realAddrString];
@@ -175,7 +175,7 @@ int sayReq(struct request_say *rs)
     get channel of request*/
     string channel = rs->req_channel;
     string message = rs->req_text;
-    string username = getReqAddr();
+    string username = getUserOfCurrAddr();
     cout << "this is username in sayReq " << username << "\n";
     //get list of users on channel from usrLisChan
     //vector<string> tmpU = usrLisChan[username];
@@ -220,7 +220,33 @@ int sayReq(struct request_say *rs)
 //handle login requests
 int loginReq(struct request_login *rl)
 {
-    // OLD CODE//new request address info
+    string realAddrString = getAddr_string();
+
+    //username
+    string username = rl->req_username;
+    cout << "this is the real addr string in login: " << realAddrString << "\n";
+
+    cout << "username in login req: " << username << "\n";
+    cout << "address in login req: " << realAddrString << "\n";
+    //add address and username to map
+    addrToUser.insert(pair<string, string>(realAddrString, username));
+    userToAddr.insert(pair<string, string>(username, realAddrString));
+    //add user to common
+    map<string,vector<string> >::iterator it = chanTlkUser.find("Common");
+    vector<string> usersC;
+    if(it == chanTlkUser.end()) {
+        chanTlkUser.insert(pair<string,vector<string> >("Common", usersC));
+    }
+    it = chanTlkUser.find('Common');
+    usersC = it->second;
+    usersC.insert(users.begin(), username);
+    chanTlkUser["Common"] = usersC;
+    //add to user lisChan
+    vector<string> channels;
+    channels.insert(channels.begin(), "Common");
+    usrLisChan.insert(pair<string,vector<string> >(username, channels));
+    usrTlkChan.insert(pair<string,vector<string> >(username, channels));
+    // OLD CODE//new request address inf.find()o
     // struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
     
     // char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
@@ -228,10 +254,8 @@ int loginReq(struct request_login *rl)
     // inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
     // //this is our readable address
     // string realAddrString = addrString;
-    string realAddrString = getAddr_string();
-    //username
-    string username = rl->req_username;
-    cout << "this is the real addr string in login: " << realAddrString << "\n";
+    
+    
     //free (addrString);
     //look for address in addrToUser
     //__OLD_CODE__ map<string, string>::iterator hit = addrToUser.find(realAddrString);
@@ -254,32 +278,27 @@ int loginReq(struct request_login *rl)
     //     usrTlkChan.erase(username);
     // }
     //for all channels, if there is a user in the channels talk user list chanTlkUser[i] then erase the user from the chanTlkUser and add it back to channels talk user list chanTlkUser[i]
-    for(int i=0; i<channels.size(); i++) {
-        vector<string> uOnC = chanTlkUser[channels[i]];
-        if(!uOnC.empty()) {
-            for(int j=0; j<uOnC.size(); j++) {
-                if(username == uOnC[j]) {
-                    uOnC.erase(uOnC.begin()+j);
-                }
-            }
-        }
-        chanTlkUser[channels[i]] = uOnC;
-    }
-
-    cout << "username in login req: " << username << "\n";
-    cout << "address in login req: " << realAddrString << "\n";
-    addrToUser.insert(pair<string, string>(realAddrString, username));
-    userToAddr.insert(pair<string, string>(username, realAddrString));
+    // for(int i=0; i<channels.size(); i++) {
+    //     vector<string> uOnC = chanTlkUser[channels[i]];
+    //     if(!uOnC.empty()) {
+    //         for(int j=0; j<uOnC.size(); j++) {
+    //             if(username == uOnC[j]) {
+    //                 uOnC.erase(uOnC.begin()+j);
+    //             }
+    //         }
+    //     }
+    //     chanTlkUser[channels[i]] = uOnC;
+    // }
     // addrToUser[realAddrString] = username;
     // userToAddr[username] = realAddrString;
-    map<string,string>::iterator it = addrToUser.find(realAddrString);
-    if(it != addrToUser.end()) {
+    // map<string,string>::iterator it = addrToUser.find(realAddrString);
+    // if(it != addrToUser.end()) {
         
-        cout << it->first << " that THING is in LoGIN " << it->second << " so is that\n";
-        //return -1;
-    } else {
-        cout << "super baddd addressss mann\n";
-    }
+    //     cout << it->first << " that THING is in LoGIN " << it->second << " so is that\n";
+    //     //return -1;
+    // } else {
+    //     cout << "super baddd addressss mann\n";
+    // }
     return 0;
 }
 //handle login requests
@@ -332,7 +351,7 @@ int joinReq(struct request_join *rj)
     //create tmp vars for username and channel of request
     string chan = (string)rj->req_channel;
 
-    string user = getReqAddr();
+    string user = getUserOfCurrAddr();
     int trig = 0;
     //tmp vector for channel user is listening to
     vector<string> chanList = usrLisChan[user];
