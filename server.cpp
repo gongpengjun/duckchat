@@ -75,8 +75,7 @@ int main(int argc, char **argv)
                 }
             }
             chanTlkUser[channels[i]] = uOnC;
-        }  
-        recAddr = NULL; 
+        }   
         //for multiple requests maybe
         // requests = (struct request*) malloc(sizeof (struct request) + BUFLEN); 
         char *buf = new char[BUFLEN];
