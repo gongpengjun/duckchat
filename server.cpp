@@ -443,7 +443,8 @@ int logoutReq(struct request_logout *rl)
         usrTlkChan.erase(username);
     }
     //erase user on channels in chanTlkUser
-    cout << "before fail   \n";
+    cout << "before fail  " << channels.size() << " \n";
+
     for(int ick=0; ick<channels.size(); ick++) {
         cout << "in outerr \n";
         map<string,vector<string> >::iterator itck = chanTlkUser.find(channels[ick]);
