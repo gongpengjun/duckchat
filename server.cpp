@@ -209,7 +209,7 @@ int sayReq(struct request_say *rs)
         int size = sizeof(struct sockaddr);
         int res= sendto(sockfd, msg, sizeof(struct text_say), 0, address, size);
         if (res == -1) {
-            cout << "sendto very badd \n";
+            cout << "sendto very badd: " << ad << " that was ad\n";
             return -1;
         }
         free(msg);
