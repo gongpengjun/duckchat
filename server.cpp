@@ -214,7 +214,7 @@ int sayReq(struct request_say *rs)
         strncpy(s, ad.second.c_str(), strlen(ad.second.c_str()));
         cout << ad.second << " which that should be 0 and " << ad.first << " is 127\n"; 
         //from s to address and format
-        inet_pton(AF_INET, s, &(address->sin_addr));
+        inet_pton(AF_INET, s, &(address->sin6_addr));
         
         multimap<string,int>::iterator addrToPit = addrToPort.find(ad.first);
         cout << "port as is: " << addrToPit->second << " \n";
@@ -239,7 +239,7 @@ int sayReq(struct request_say *rs)
         strncpy(msg->txt_channel, channel.c_str(), CHANNEL_MAX);
         //send message
         int size = sizeof(struct sockaddr*);
-        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, (struct sockaddr*)address->sin_addr, size);
+        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, (struct sockaddr*)address, size);
         if (res == -1) {
             cout << "sendto very badd \n";
             return -1;
