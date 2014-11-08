@@ -317,6 +317,8 @@ int sendReqs(char buf[], struct addrinfo* addrAr)//parse user input and send app
         else if(buf[1] == 'l' && buf[2] == 'e' && buf[3] == 'a' && buf[4] == 'v' && buf[5] == 'e' && buf[6] == ' ')
         {
             //cout << "leave decected" << endl;
+            if(myset.size() == 0)//empty set, nothing to leave
+                return(0);
             struct request_leave leave;
             leave.req_type = REQ_LEAVE;
             int i;
@@ -385,8 +387,13 @@ int sendReqs(char buf[], struct addrinfo* addrAr)//parse user input and send app
                 tmpChannelName[i] = buf[i + 5];
                 //cout << "tmp[i] = " << tmp[i] << endl;
             }
-            channelName = tmpChannelName;
-            strcpy(who.req_channel, channelName);
+            if(myset.size() != 0)//if we are on a channel
+            {
+                channelName = tmpChannelName;
+                strcpy(who.req_channel, channelName);
+            }
+            else
+                strcpy(who.req_channel, tmpChannelName);
             int size = sizeof(struct sockaddr);
             if (sendto(sockfd, &who, sizeof(who), 0, (struct sockaddr*)addrAr->ai_addr, size)==-1)//addrAr->ai_addrlen
                     err("sendto()");
