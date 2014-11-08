@@ -41,7 +41,7 @@ int sayReq(struct request_say*);
 int checkValidAddr();
 string getUserOfCurrAddr();
 string getAddr_string();
-string getSemiAddr_string()
+string getSemiAddr_string();
 
 //program
 int main(int argc, char **argv)
