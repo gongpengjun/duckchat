@@ -141,7 +141,9 @@ int checkValidAddr(struct request *r)
     //make address string
     inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
     //have tmp var
+
     string realAddrString = addrString;
+    cout << realAddrString << "Jack look\n"; 
     free (addrString);
     //look in map for address
     //string aTmp = addrToUser[realAddrString];
