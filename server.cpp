@@ -192,6 +192,7 @@ int sayReq(struct request_say *rs)
         //get address of current user
         struct sockaddr_in* address;
         string ad = userToAddr[tmpU[i]];
+        cout << "this is address in loop of say " << ad << " \n";
         char *s= (char*) malloc(sizeof(char)*BUFLEN);
         //move ad to t (address)
         strncpy(s, ad.c_str(), strlen(ad.c_str()));
@@ -206,8 +207,8 @@ int sayReq(struct request_say *rs)
         strncpy(msg->txt_text, message.c_str(), SAY_MAX);
         strncpy(msg->txt_channel, channel.c_str(), CHANNEL_MAX);
         //send message
-        size_t size = sizeof(struct sockaddr_in);
-        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, (struct sockaddr*)&address, size);
+        int size = sizeof(struct sockaddr_in);
+        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, address, size);
         if (res == -1) {
             cout << "sendto very badd \n";
             return -1;
