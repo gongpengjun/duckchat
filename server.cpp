@@ -242,10 +242,10 @@ int loginReq(struct request_login *rl)
     usersC.insert(usersC.begin(), username);
     chanTlkUser["Common"] = usersC;
     //add to user lisChan
-    vector<string> channels;
-    channels.insert(channels.begin(), "Common");
-    usrLisChan.insert(pair<string,vector<string> >(username, channels));
-    usrTlkChan.insert(pair<string,vector<string> >(username, channels));
+    vector<string> chans;
+    chans.insert(chans.begin(), "Common");
+    usrLisChan.insert(pair<string,vector<string> >(username, chans));
+    usrTlkChan.insert(pair<string,vector<string> >(username, chans));
     // OLD CODE//new request address inf.find()o
     // struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
     
@@ -306,16 +306,9 @@ int logoutReq(struct request_logout *rl)
 {
     //new request address info
     cout << "Logout REquesssttt \n";
-    struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
-    char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
-    //make address string
-    inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
     //have tmp var
-    string realAddrString = addrString;
-    free (addrString);
-    string username;
-    //get username 
-    username = addrToUser[realAddrString];
+    string realAddrString = getAddr_string();
+    string username = getUserOfCurrAddr();
     map<string,string>::iterator it;
     //delete address and user in both maps and both channe maps
     //look for address
