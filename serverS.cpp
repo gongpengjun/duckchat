@@ -33,7 +33,7 @@ struct addrinfo *addrAr;
 multimap<pair<string,string>, string> addrToUser;
 multimap<string, pair<string,string> > userToAddr;
 map<string,string> usrTlkChan;
-multimap<string,struct sockaddr> userToAddrStrct;
+map<string,struct sockaddr> userToAddrStrct;
 map<string,vector<string> > chanTlkUser;
 vector<string> channels;
 //methods
