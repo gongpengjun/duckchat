@@ -82,7 +82,7 @@ int main(int argc, char **argv)
 string getUserOfCurrAddr()
 { 
     pair<string,string> realAddrString (getAddr_string(),getSemiAddr_string());
-    struct sockaddr_in address = (struct sockaddr_in)recAddr;
+    struct sockaddr_in address = (struct sockaddr_in)&recAddr;
     string aTmp = "";     
     map<string,struct sockadd_in>::iterator i = userToAddrStrct.find(realAddrString);
     for(i=userToAddrStrct.begin(); i != userToAddrStrct.end(); i++) {
