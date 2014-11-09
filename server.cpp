@@ -93,8 +93,8 @@ int checkAddrEq(struct sockaddr_in a, struct sockaddr_in b)
 {
     char *addrA = (char*)malloc(sizeof(char)*BUFLEN);
     char *addrB = (char*)malloc(sizeof(char)*BUFLEN);
-    inet_ntop(AF_INET, &(a->sin_addr), addrA, BUFLEN);
-    inet_ntop(AF_INET, &(b->sin_addr), addrB, BUFLEN);
+    inet_ntop(AF_INET, &(a.sin_addr), addrA, BUFLEN);
+    inet_ntop(AF_INET, &(b.sin_addr), addrB, BUFLEN);
     string stringA = addrA;
     string stringB = addrB;
     if(stringA == stringB) {
