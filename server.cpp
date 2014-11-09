@@ -109,7 +109,7 @@ int checkAddrEq(struct sockaddr_in a, struct sockaddr_in b)
 
 struct sockaddr_in getAddrStruct() 
 {
-    struct sockaddr_in* address = (struct sockaddr_in*)recAddr;
+    struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
     return *address;
 }
 //check if current request address is valid or exist in map
