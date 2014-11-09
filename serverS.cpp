@@ -156,7 +156,7 @@ int sayReq(struct request_say *rs)
     for(int i=0; i<tmpU.size(); i++) {
         cout << "user: " << tmpU[i] << " on channel: " << channel << " in iteration on say loop:  " << i <<"\n";
         struct sockaddr* address;
-        multimap<string, struct sockaddr>::iterator ui = userToAddr.find(tmpU[i]);
+        map<string, struct sockaddr>::iterator ui = userToAddrStrct.find(tmpU[i]);
         address = ui->second;
         struct text_say *msg= (struct text_say*) malloc(sizeof(struct text_say));
         msg->txt_type= htonl(TXT_SAY);
