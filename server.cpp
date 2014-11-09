@@ -146,7 +146,7 @@ int sayReq(struct request_say *rs)
         cout << "Beforer SEGG?? that maney USERSSS\n";
         address = ui->second;
         cout << "AFTER SEGG?? that maney USERSSS\n";
-        struct text_say *msg = (struct text_say*) malloc(sizeof(struct text_say));;
+        struct text_say *msg = (struct text_say*) malloc(sizeof(struct text_say) + BUFLEN);;
         msg->txt_type= htonl(TXT_SAY);
         strncpy(msg->txt_username, username.c_str(), USERNAME_MAX);
         strncpy(msg->txt_text, message.c_str(), SAY_MAX);
