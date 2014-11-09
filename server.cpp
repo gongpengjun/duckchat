@@ -79,7 +79,7 @@ string getUserOfCurrAddr()
 { 
     struct sockaddr_in address = (struct sockaddr_in)recAddr;
     string aTmp = "";     
-    map<string,struct sockadd_in>::iterator i;
+    map<string,struct sockaddr_in>::iterator i;
     for(i=userToAddrStrct.begin(); i != userToAddrStrct.end(); i++) {
         if(i->second == address) {
             aTmp = i->first;
