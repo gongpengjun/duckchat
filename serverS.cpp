@@ -67,10 +67,10 @@ int main(int argc, char **argv)
             requests = (request*) buf;
             cout << "do I get herer??? \n";
             readRequestType(requests, bal);  
-            // map<string,struct sockaddr_in>::iterator pit;
-            // for(pit = userToAddrStrct.begin(); pit!= userToAddrStrct.end(); pit++) {
-            //     cout << "users in struct " << pit->first << " \n";
-            // }
+            for(map<string,sockaddr_in>::iterator beem = userToAddrStrct.begin(); beem !=userToAddrStrct.end(); beem++) {
+                cout << "users are: " << beem->first << " \n";
+            }
+
         } 
 
        //requests = NULL;
