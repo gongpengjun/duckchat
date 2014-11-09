@@ -19,6 +19,7 @@
 #include <iostream>
 #include <string>
 #include <map>
+#include <set> 
 #include <utility>
 #include <vector>
 #include "duckchat.h"
@@ -44,6 +45,7 @@ int getAddr_Port();
 struct sockaddr_in getAddrStruct();
 int checkAddrEq(struct sockaddr_in, struct sockaddr_in);
 string stringAddr(struct sockaddr_in);
+int listReq(struct request_list *rl, struct sockaddr_in address);
 
 //program
 int main(int argc, char **argv)
@@ -71,6 +73,7 @@ int main(int argc, char **argv)
             cout << "User: " << imu->first << " talking on channel: " << imu->second << "\n"; 
         }
         cout << "printing user to addres map:\n";
+        cout << "user to addres map size is: " << userToAddrStrct.size() <<"\n";
         for(map<string,struct sockaddr_in>::iterator isu = userToAddrStrct.begin(); isu != userToAddrStrct.end(); isu++) {
             cout << "User: " << isu->first << " with address: " << stringAddr(isu->second) << " with port #: " << isu->second.sin_port <<"\n"; 
         }
@@ -274,25 +277,24 @@ int leaveReq(struct request_leave *rl)
     return 0;
 }
 //handle login requests
-int listReq(struct request_list *rl)
+int listReq(struct request_list *rl, struct sockaddr_in* address)
 {
-    // struct sockaddr* address; 
-    // char *s= (char*) malloc(sizeof(char)*BUFLEN);
-    // strncpy(s, ad.c_str(), strlen(ad.c_str()));
-    // inet_pton(AF_INET, s, &address);
-    // struct text_list *msg= (struct text_list*) malloc(sizeof(struct text_list) + BUFLEN);
-    // msg->txt_type= htonl(TXT_LIST);
-    // msg->txt_nchannels = htonl(channels.size());
-    // for (int i = 0; i < channels.size(); i++) {
-    //     strncpy(msg->txt_channels[i].ch_channel, channels[i].c_str(), CHANNEL_MAX);
-    // }
-    // int size = sizeof(struct sockaddr);
-    // int res= sendto(sockfd, msg, sizeof(struct text_list), 0, address, size);
-    // if (res == -1) {
-    //     cout << "sendto very badd \n";
-    //     //return -1;
-    // }
-    // free(msg);
+    int numCHAN = channels.size();
+    struct text_list *msg;
+    struct channel_info minfo[numCHAN];
+    msg->txt_type= TXT_LIST;
+    msg->txt_nchannels = numCHAN;
+    struct sockaddr_in add = *address;
+    for (int i = 0; i<channels.size(); i++) {
+        const char* tstr = channels[i].c_str();
+        strcpy(((msg->txt_channels)+i)->ch_channel, tstr);
+    }
+    int size = sizeof(struct sockaddr);
+    int res= sendto(sockfd, msg,  (sizeof(struct text_list)+(numCHAN *sizeof(struct channel_info))), 0, (struct sockaddr*)&add, size);
+    if (res == -1) {
+        cout << "sendto very badd \n";
+        return -1;
+    }
     return 0;
 }
 //handle login requests
@@ -367,7 +369,9 @@ int readRequestType(struct request *r, int b)
         case REQ_LIST:
             if(sizeof(struct request_list) == b) {
                 cout << "list request\n";
-                fin = listReq((struct request_list*) r);
+                string username = getUserOfCurrAddr();
+                struct sockaddr_in address = userToAddrStrct[username];
+                fin = listReq((struct request_list*) r, &address);
                 break;
             } else {
                 cout << "list request bad size\n";
