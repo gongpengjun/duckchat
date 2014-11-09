@@ -81,10 +81,9 @@ int main(int argc, char **argv)
 //returns string of username of current request address
 string getUserOfCurrAddr()
 { 
-    pair<string,string> realAddrString (getAddr_string(),getSemiAddr_string());
-    struct sockaddr_in address = recAddr;
+    struct sockaddr_in address =(sockaddr_in)recAddr;
     string aTmp = "";     
-    map<string,struct sockadd_in>::iterator i = userToAddrStrct.find(realAddrString);
+    map<string,struct sockaddr_in>::iterator i;
     for(i=userToAddrStrct.begin(); i != userToAddrStrct.end(); i++) {
         if(i->second == address) {
             aTmp = i->first;
