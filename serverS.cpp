@@ -100,7 +100,7 @@ string getSemiAddr_string()
 }
 struct sockaddr* getAddrStruct() 
 {
-    struct sockaddr address = &recAddr;
+    struct sockaddr address = recAddr;
     return address;
 }
 //returns string form of address
