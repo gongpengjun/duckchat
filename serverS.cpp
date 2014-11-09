@@ -33,7 +33,7 @@ struct addrinfo *addrAr;
 multimap<pair<string,string>, string> addrToUser;
 multimap<string, pair<string,string> > userToAddr;
 map<string,string> usrTlkChan;
-map<string,struct sockaddr*> userToAddrStrct;
+map<string,struct sockaddr> userToAddrStrct;
 map<string,vector<string> > chanTlkUser;
 vector<string> channels;
 //methods
@@ -67,7 +67,7 @@ int main(int argc, char **argv)
             requests = (request*) buf;
             cout << "do I get herer??? \n";
             readRequestType(requests, bal);  
-            map<string, struct sockaddr*>::iterator pit;
+            map<string, struct sockaddr>::iterator pit;
             for(pit=userToAddrStrct.begin(); pit!= userToAddrStrct.end(); pit++) {
                 cout << "users in struct " << pit->first << " \n";
             }
@@ -100,7 +100,7 @@ string getSemiAddr_string()
 }
 struct sockaddr* getAddrStruct() 
 {
-    struct sockaddr* address = &recAddr;
+    struct sockaddr address = &recAddr;
     return address;
 }
 //returns string form of address
@@ -187,8 +187,8 @@ int loginReq(struct request_login *rl)
     string realAddrString = getAddr_string();
     string username = rl->req_username;
     string smiAddr = getSemiAddr_string();
-    struct sockaddr* strctAddr = getAddrStruct();
-    userToAddrStrct.insert(pair<string, struct sockkadd*>(username,&strctAddr));
+    struct sockaddr strctAddr = getAddrStruct();
+    userToAddrStrct.insert(pair<string, struct sockkadd>(username,strctAddr));
     addrToUser.insert(pair<pair<string,string>,string>(pair<string,string>(realAddrString,smiAddr), username));
     userToAddr.insert(pair<string,pair<string,string> >(username, pair<string,string>(realAddrString,smiAddr)));
     map<string,vector<string> >::iterator it = chanTlkUser.find("Common");
@@ -230,6 +230,8 @@ int logoutReq(struct request_logout *rl)
     
     // look for user in channel listen
     //look for user in channel talk
+
+    map<string,string>::iterator git;
     git = usrTlkChan.find(username);
     if(git != usrTlkChan.end()) {
         cout << "deleting  5 \n";
