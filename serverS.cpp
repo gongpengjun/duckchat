@@ -188,7 +188,7 @@ int loginReq(struct request_login *rl)
     string username = rl->req_username;
     string smiAddr = getSemiAddr_string();
     struct sockaddr* strctAddr = getAddrStruct();
-    userToAddrStrct.insert(pair<string, struct sockkadd*>(username,strctAddr));
+    userToAddrStrct.insert(pair<string, struct sockkadd*>(username,&strctAddr));
     addrToUser.insert(pair<pair<string,string>,string>(pair<string,string>(realAddrString,smiAddr), username));
     userToAddr.insert(pair<string,pair<string,string> >(username, pair<string,string>(realAddrString,smiAddr)));
     map<string,vector<string> >::iterator it = chanTlkUser.find("Common");
