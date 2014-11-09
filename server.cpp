@@ -146,8 +146,12 @@ int sayReq(struct request_say *rs)
         cout << ui->first << " is user in tmp map  __Beforer SEGG?? that maney USERSSS\n";
         address = ui->second;
         cout << "AFTER SEGG?? that maney USERSSS\n";
-        struct text_say *msg = (struct text_say*) malloc(sizeof(struct text_say) + BUFLEN);;
+        struct text_say *msg = (struct text_say*) malloc(sizeof(struct text_say) + BUFLEN);
         msg->txt_type= htonl(TXT_SAY);
+        char *AAA = (char*)malloc(sizeof(char)*BUFLEN);
+        inet_ntop(AF_INET, &(address.sin_addr), AAA, BUFLEN);
+        string printString = AAA;
+        cout << printString << " that is address\n";
         strncpy(msg->txt_username, username.c_str(), USERNAME_MAX);
         strncpy(msg->txt_text, message.c_str(), SAY_MAX);
         strncpy(msg->txt_channel, channel.c_str(), CHANNEL_MAX);
