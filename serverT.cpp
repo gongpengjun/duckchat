@@ -67,10 +67,6 @@ int main(int argc, char **argv)
             requests = (request*) buf;
             cout << "do I get herer??? \n";
             readRequestType(requests, bal);  
-            for(map<string,sockaddr_in>::iterator beem = userToAddrStrct.begin(); beem !=userToAddrStrct.end(); beem++) {
-                cout << "users are: " << beem->first << " \n";
-            }
-
         } 
 
        //requests = NULL;
