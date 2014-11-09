@@ -30,24 +30,20 @@ struct sockaddr recAddr;
 socklen_t fromlen = sizeof(recAddr);
 int sockfd;
 struct addrinfo *addrAr;
-multimap<pair<string,string>, string> addrToUser;
-multimap<string, pair<string,string> > userToAddr;
 map<string,string> usrTlkChan;
 map<string,struct sockaddr_in> userToAddrStrct;
 map<string,vector<string> > chanTlkUser;
 vector<string> channels;
 //methods
 int connectToSocket(char*, char*);
-void err(char*);
 int readRequestType(struct request*, int);
 int sayReq(struct request_say*);
 int checkValidAddr();
 string getUserOfCurrAddr();
-string getAddr_string();
-string getSemiAddr_string();
 int getAddr_Port();
 struct sockaddr_in getAddrStruct();
-int checkAddrEq(struct sockaddr_in a, struct sockaddr_in b);
+int checkAddrEq(struct sockaddr_in, struct sockaddr_in);
+string stringAddr(struct sockaddr_in);
 
 //program
 int main(int argc, char **argv)
@@ -58,7 +54,8 @@ int main(int argc, char **argv)
     while(1)
     {
         //for multiple requests maybe
-        // requests = (struct request*) malloc(sizeof (struct request) + BUFLEN); 
+        // requests = (struct request*) malloc(sizeof (struct request) + BUFLEN);
+        cout << "\n"; 
         char *buf = new char[BUFLEN];
         struct request *requests = (struct request*)malloc(sizeof(struct request*) + BUFLEN);  
         int bal = 0;
@@ -69,11 +66,35 @@ int main(int argc, char **argv)
             cout << "do I get herer??? \n";
             readRequestType(requests, bal);
         } 
-
-       //requests = NULL;
+        cout << "printing user talk channel map:\n";
+        for(map<string,string>::iterator imu = usrTlkChan.begin(); imu != usrTlkChan.end(); imu++) {
+            cout << "User: " << imu->first << " talking on channel: " << imu->second << "\n"; 
+        }
+        cout << "printing user to addres map:\n";
+        for(map<string,struct sockaddr_in>::iterator isu = userToAddrStrct.begin(); isu != userToAddrStrct.end(); isu++) {
+            cout << "User: " << isu->first << " with address: " << stringAddr(isu->second) << " with port #: " << isu->second.sin_port <<"\n"; 
+        }
+        cout << "printing users on each channel: \n";
+        for(int ick=0; ick<channels.size(); ick++) {
+            cout << channels[ick] << " has users:\n";
+            map<string,vector<string> >::iterator itck = chanTlkUser.find(channels[ick]);
+            vector<string> usersC = itck->second;
+            for(int j=0; j<usersC.size(); j++) {
+                cout << " : "<< usersC[j] << " : ";
+            }
+            cout << "\n";
+        }
        delete[] buf;   
     }
     return 0;
+}
+//returns string of sockaddr_in
+string stringAddr(struct sockaddr_in a)
+{
+    char *addrA = (char*)malloc(sizeof(char)*BUFLEN);
+    inet_ntop(AF_INET, &(a.sin_addr), addrA, BUFLEN);
+    string retString = addrA;
+    return retString;
 }
 //returns string of username of current request address
 string getUserOfCurrAddr()
@@ -82,10 +103,10 @@ string getUserOfCurrAddr()
     string aTmp = "";     
     map<string,struct sockaddr_in>::iterator i;
     for(i=userToAddrStrct.begin(); i != userToAddrStrct.end(); i++) {
+        cout << "before checkEQ call\n";
         if(checkAddrEq(i->second,*address) == 0) {
             aTmp = i->first;
         }
-
     }
     return aTmp;
 }
@@ -99,7 +120,7 @@ int checkAddrEq(struct sockaddr_in a, struct sockaddr_in b)
     string stringB = addrB;
     if(stringA == stringB) {
         int portA = a.sin_port;
-        int portB = a.sin_port;
+        int portB = b.sin_port;
         if(portA == portB) {
             return 0;
         }
@@ -113,16 +134,16 @@ struct sockaddr_in getAddrStruct()
     return *address;
 }
 //check if current request address is valid or exist in map
-int checkValidAddr(struct request *r) 
+int checkValidAddr() 
 {
     struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
     map<string,struct sockaddr_in>::iterator i;
     for(i=userToAddrStrct.begin(); i != userToAddrStrct.end(); i++) {
         if(checkAddrEq(i->second,*address)==0) {
-            return 1;
+            return 0;
         }
     }
-    return 0;
+    return -1;
 }
 //handle say requests
 int sayReq(struct request_say *rs)
@@ -192,9 +213,6 @@ int logoutReq(struct request_logout *rl)
     map<string, struct sockaddr_in>::iterator sockIt = userToAddrStrct.find(username);
     userToAddrStrct.erase(sockIt);
     
-    // look for user in channel listen
-    //look for user in channel talk
-
     map<string,string>::iterator git;
     git = usrTlkChan.find(username);
     if(git != usrTlkChan.end()) {
@@ -223,6 +241,7 @@ int joinReq(struct request_join *rj)
     //create tmp vars for username and channel of request
     string chan = (string)rj->req_channel;
     string user = getUserOfCurrAddr();
+    cout << "USER IN JOIN METHOD: " << user << "\n";
     int trig = 0;
     map<string,vector<string> >::iterator it = chanTlkUser.find(chan);
     vector<string> usersC;
@@ -257,26 +276,23 @@ int leaveReq(struct request_leave *rl)
 //handle login requests
 int listReq(struct request_list *rl)
 {
-    struct sockaddr* address; 
-    multimap<string, pair<string,string> >::iterator ui = userToAddr.find(getUserOfCurrAddr());
-    pair<string,string> tad = ui->second;
-    string ad = tad.second;
-    char *s= (char*) malloc(sizeof(char)*BUFLEN);
-    strncpy(s, ad.c_str(), strlen(ad.c_str()));
-    inet_pton(AF_INET, s, &address);
-    struct text_list *msg= (struct text_list*) malloc(sizeof(struct text_list) + BUFLEN);
-    msg->txt_type= htonl(TXT_LIST);
-    msg->txt_nchannels = htonl(channels.size());
-    for (int i = 0; i < channels.size(); i++) {
-        strncpy(msg->txt_channels[i].ch_channel, channels[i].c_str(), CHANNEL_MAX);
-    }
-    int size = sizeof(struct sockaddr);
-    int res= sendto(sockfd, msg, sizeof(struct text_list), 0, address, size);
-    if (res == -1) {
-        cout << "sendto very badd \n";
-        //return -1;
-    }
-    free(msg);
+    // struct sockaddr* address; 
+    // char *s= (char*) malloc(sizeof(char)*BUFLEN);
+    // strncpy(s, ad.c_str(), strlen(ad.c_str()));
+    // inet_pton(AF_INET, s, &address);
+    // struct text_list *msg= (struct text_list*) malloc(sizeof(struct text_list) + BUFLEN);
+    // msg->txt_type= htonl(TXT_LIST);
+    // msg->txt_nchannels = htonl(channels.size());
+    // for (int i = 0; i < channels.size(); i++) {
+    //     strncpy(msg->txt_channels[i].ch_channel, channels[i].c_str(), CHANNEL_MAX);
+    // }
+    // int size = sizeof(struct sockaddr);
+    // int res= sendto(sockfd, msg, sizeof(struct text_list), 0, address, size);
+    // if (res == -1) {
+    //     cout << "sendto very badd \n";
+    //     //return -1;
+    // }
+    // free(msg);
     return 0;
 }
 //handle login requests
@@ -296,7 +312,7 @@ int readRequestType(struct request *r, int b)
     }
     //check if request address is valid
     if(netHost != 0) {
-        if(checkValidAddr(r) == -1) {
+        if(checkValidAddr() == -1) {
             cout << "invalid address\n";
             return -1;
         } 
