@@ -33,7 +33,7 @@ struct addrinfo *addrAr;
 multimap<pair<string,string>, string> addrToUser;
 multimap<string, pair<string,string> > userToAddr;
 map<string,string> usrTlkChan;
-map<string,struct sockaddr> userToAddrStrct;
+multimap<string,struct sockaddr> userToAddrStrct;
 map<string,vector<string> > chanTlkUser;
 vector<string> channels;
 //methods
@@ -188,7 +188,7 @@ int loginReq(struct request_login *rl)
     string username = rl->req_username;
     string smiAddr = getSemiAddr_string();
     struct sockaddr strctAddr = getAddrStruct();
-    userToAddrStrct.insert(pair<string, struct sockkaddr>(username,strctAddr));
+    userToAddrStrct[username] = strctAddr;
     addrToUser.insert(pair<pair<string,string>,string>(pair<string,string>(realAddrString,smiAddr), username));
     userToAddr.insert(pair<string,pair<string,string> >(username, pair<string,string>(realAddrString,smiAddr)));
     map<string,vector<string> >::iterator it = chanTlkUser.find("Common");
