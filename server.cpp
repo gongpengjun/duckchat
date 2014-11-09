@@ -141,8 +141,11 @@ int sayReq(struct request_say *rs)
     for(int i=0; i<tmpU.size(); i++) {
         cout << "user: " << tmpU[i] << " on channel: " << channel << " in iteration on say loop:  " << i <<"\n";
         struct sockaddr_in address;
+        cout << "REALLY Beforer SEGG?? that maney USERSSS\n";
         map<string, struct sockaddr_in>::iterator ui = userToAddrStrct.find(tmpU[i]);
+        cout << "Beforer SEGG?? that maney USERSSS\n";
         address = ui->second;
+        cout << "AFTER SEGG?? that maney USERSSS\n";
         struct text_say *msg;
         msg->txt_type= htonl(TXT_SAY);
         strncpy(msg->txt_username, username.c_str(), USERNAME_MAX);
