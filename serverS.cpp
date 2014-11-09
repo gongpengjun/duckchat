@@ -46,7 +46,7 @@ string getUserOfCurrAddr();
 string getAddr_string();
 string getSemiAddr_string();
 int getAddr_Port();
-struct sockaddr* getAddrStruct()
+struct sockaddr* getAddrStruct();
 
 //program
 int main(int argc, char **argv)
