@@ -81,7 +81,7 @@ string getUserOfCurrAddr()
     string aTmp = "";     
     map<string,struct sockaddr_in>::iterator i;
     for(i=userToAddrStrct.begin(); i != userToAddrStrct.end(); i++) {
-        if(i->second == address) {
+        if(i->second == *address) {
             aTmp = i->first;
         }
 
