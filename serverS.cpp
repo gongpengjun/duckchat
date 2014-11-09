@@ -155,7 +155,7 @@ int sayReq(struct request_say *rs)
     vector<string> tmpU = hit->second;
     for(int i=0; i<tmpU.size(); i++) {
         cout << "user: " << tmpU[i] << " on channel: " << channel << " in iteration on say loop:  " << i <<"\n";
-        struct sockaddr* address;
+        struct sockaddr address;
         map<string, struct sockaddr>::iterator ui = userToAddrStrct.find(tmpU[i]);
         address = ui->second;
         struct text_say *msg= (struct text_say*) malloc(sizeof(struct text_say));
@@ -163,8 +163,8 @@ int sayReq(struct request_say *rs)
         strncpy(msg->txt_username, username.c_str(), USERNAME_MAX);
         strncpy(msg->txt_text, message.c_str(), SAY_MAX);
         strncpy(msg->txt_channel, channel.c_str(), CHANNEL_MAX);
-        int size = sizeof(struct sockaddr);
-        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, address, size);
+        int size = sizeof(struct sockaddr*);
+        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, (struct sockaddr*)address, size);
         if (res == -1) {
             cout << "sendto very badd \n";
             //return -1;
