@@ -143,7 +143,7 @@ int sayReq(struct request_say *rs)
         struct sockaddr_in address;
         cout << "REALLY Beforer SEGG?? that maney USERSSS\n";
         map<string, struct sockaddr_in>::iterator ui = userToAddrStrct.find(tmpU[i]);
-        cout << "Beforer SEGG?? that maney USERSSS\n";
+        cout << ui->first << " is user in tmp map  __Beforer SEGG?? that maney USERSSS\n";
         address = ui->second;
         cout << "AFTER SEGG?? that maney USERSSS\n";
         struct text_say *msg = (struct text_say*) malloc(sizeof(struct text_say) + BUFLEN);;
