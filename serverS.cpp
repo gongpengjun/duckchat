@@ -156,12 +156,8 @@ int sayReq(struct request_say *rs)
     for(int i=0; i<tmpU.size(); i++) {
         cout << "user: " << tmpU[i] << " on channel: " << channel << " in iteration on say loop:  " << i <<"\n";
         struct sockaddr* address;
-        multimap<string, pair<string,string> >::iterator ui = userToAddr.find(tmpU[i]);
-        pair<string,string> tad = ui->second;
-        string ad = tad.second;
-        char *s= (char*) malloc(sizeof(char)*BUFLEN);
-        strncpy(s, ad.c_str(), strlen(ad.c_str()));
-        inet_pton(AF_INET, s, &address);
+        multimap<string, struct sockaddr>::iterator ui = userToAddr.find(tmpU[i]);
+        address = ui->second;
         struct text_say *msg= (struct text_say*) malloc(sizeof(struct text_say));
         msg->txt_type= htonl(TXT_SAY);
         strncpy(msg->txt_username, username.c_str(), USERNAME_MAX);
