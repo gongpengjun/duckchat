@@ -47,6 +47,7 @@ string getAddr_string();
 string getSemiAddr_string();
 int getAddr_Port();
 struct sockaddr_in getAddrStruct();
+int checkAddrEq(struct sockaddr_in a, struct sockaddr_in b);
 
 //program
 int main(int argc, char **argv)
@@ -81,12 +82,29 @@ string getUserOfCurrAddr()
     string aTmp = "";     
     map<string,struct sockaddr_in>::iterator i;
     for(i=userToAddrStrct.begin(); i != userToAddrStrct.end(); i++) {
-        if(i->second == *address) {
+        if(checkAddrEq(i->second,*address) == 0) {
             aTmp = i->first;
         }
 
     }
     return aTmp;
+}
+int checkAddrEq(struct sockaddr_in a, struct sockaddr_in b)
+{
+    char *addrA = (char*)malloc(sizeof(char)*BUFLEN);
+    char *addrB = (char*)malloc(sizeof(char)*BUFLEN);
+    inet_ntop(AF_INET, &(a->sin_addr), addrA, BUFLEN);
+    inet_ntop(AF_INET, &(b->sin_addr), addrB, BUFLEN);
+    string stringA = addrA;
+    string stringB = addrB;
+    if(stringA == stringB) {
+        int portA = a->sin_port;
+        int portB = a->sin_port;
+        if(portA == portB) {
+            return 0;
+        }
+    }
+    return -1;
 }
 
 struct sockaddr_in getAddrStruct() 
