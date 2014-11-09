@@ -115,13 +115,12 @@ struct sockaddr_in getAddrStruct()
 //check if current request address is valid or exist in map
 int checkValidAddr(struct request *r) 
 {
-    struct sockaddr_in address = (struct sockaddr_in)recAddr;
+    struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
     map<string,struct sockadd_in>::iterator i;
     for(i=userToAddrStrct.begin(); i != userToAddrStrct.end(); i++) {
-        if(i->second == address) {
+        if(checkAddrEq(i->second,address)==0) {
             return 1;
         }
-
     }
     return 0;
 }
