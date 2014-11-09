@@ -137,6 +137,7 @@ int sayReq(struct request_say *rs)
         return -1; 
     }
     vector<string> tmpU = hit->second;
+    cout << tmp.size() << " that maney USERSSS\n";
     for(int i=0; i<tmpU.size(); i++) {
         cout << "user: " << tmpU[i] << " on channel: " << channel << " in iteration on say loop:  " << i <<"\n";
         struct sockaddr_in address;
