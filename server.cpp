@@ -81,7 +81,6 @@ int main(int argc, char **argv)
 //returns string of username of current request address
 string getUserOfCurrAddr()
 { 
-    pair<string,string> realAddrString (getAddr_string(),getSemiAddr_string());
     struct sockaddr_in address = (struct sockaddr_in)&recAddr;
     string aTmp = "";     
     map<string,struct sockadd_in>::iterator i = userToAddrStrct.find(realAddrString);
