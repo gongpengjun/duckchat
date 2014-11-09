@@ -116,7 +116,7 @@ struct sockaddr_in getAddrStruct()
 int checkValidAddr(struct request *r) 
 {
     struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
-    map<string,struct sockadd_in>::iterator i;
+    map<string,struct sockaddr_in>::iterator i;
     for(i=userToAddrStrct.begin(); i != userToAddrStrct.end(); i++) {
         if(checkAddrEq(i->second,address)==0) {
             return 1;
