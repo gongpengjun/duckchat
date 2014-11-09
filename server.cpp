@@ -66,11 +66,7 @@ int main(int argc, char **argv)
             printf("recv()'d %d bytes of data in buf\n", bal);
             requests = (request*) buf;
             cout << "do I get herer??? \n";
-            readRequestType(requests, bal);  
-            // map<string, struct sockaddr>::iterator pit;
-            // for(pit=userToAddrStrct.begin(); pit!= userToAddrStrct.end(); pit++) {
-            //     cout << "users in struct " << pit->first << " \n";
-            // }
+            readRequestType(requests, bal);
         } 
 
        //requests = NULL;
@@ -81,70 +77,35 @@ int main(int argc, char **argv)
 //returns string of username of current request address
 string getUserOfCurrAddr()
 { 
-    struct sockaddr_in* address = (struct sockaddr_in*)recAddr;
+    struct sockaddr_in address = (struct sockaddr_in)recAddr;
     string aTmp = "";     
     map<string,struct sockadd_in>::iterator i;
     for(i=userToAddrStrct.begin(); i != userToAddrStrct.end(); i++) {
-        if(i->second == &address) {
+        if(i->second == address) {
             aTmp = i->first;
         }
 
     }
     return aTmp;
 }
-//return semi address
-string getSemiAddr_string()
-{
-    struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
-    char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
-    //make address string
-    inet_ntop(AF_INET, &address, addrString, BUFLEN);
-    //have tmp var
-    string realAddrString = addrString;
-    free (addrString);
-    return realAddrString;
-}
+
 struct sockaddr_in getAddrStruct() 
 {
-    struct sockaddr_in* address = (struct sockaddr_in*)recAddr;
+    struct sockaddr_in address = (struct sockaddr_in)recAddr;
     return address;
-}
-//returns string form of address
-string getAddr_string() {
-    //new request address info
-    struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
-    char *addrString = (char*)malloc(sizeof(char)*BUFLEN);
-    //make address string
-    inet_ntop(AF_INET, &(address->sin_addr), addrString, BUFLEN);
-    //have tmp var
-    string realAddrString = addrString;
-    free (addrString);
-    return realAddrString;
-}
-//returns string form of address
-int getAddr_Port() {
-    struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;   
-    int realAddrString = htons(address->sin_port);
-    return realAddrString;
 }
 //check if current request address is valid or exist in map
 int checkValidAddr(struct request *r) 
 {
-    string realAddrString = getAddr_string();
-    string smiAddrString = getSemiAddr_string();
-    map<pair<string,string>,string>::iterator it = addrToUser.find(pair<string,string>(realAddrString,smiAddrString));
-    if(it == addrToUser.end()) {
-        cout << "super baddd addressss mann\n";
-        cout << realAddrString << " that THING\n";
-        return -1;
-    } 
+    struct sockaddr_in address = (struct sockaddr_in)recAddr;
+    map<string,struct sockadd_in>::iterator i;
+    for(i=userToAddrStrct.begin(); i != userToAddrStrct.end(); i++) {
+        if(i->second == address) {
+            return 1;
+        }
+
+    }
     return 0;
-}
-//for errors
-void err(char *str)
-{
-    perror(str);
-    exit(1);
 }
 //handle say requests
 int sayReq(struct request_say *rs)
@@ -164,7 +125,7 @@ int sayReq(struct request_say *rs)
         struct sockaddr_in address;
         map<string, struct sockaddr_in>::iterator ui = userToAddrStrct.find(tmpU[i]);
         address = ui->second;
-        struct text_say *msg= (struct text_say*) malloc(sizeof(struct text_say));
+        struct text_say *msg;
         msg->txt_type= htonl(TXT_SAY);
         strncpy(msg->txt_username, username.c_str(), USERNAME_MAX);
         strncpy(msg->txt_text, message.c_str(), SAY_MAX);
@@ -183,16 +144,9 @@ int sayReq(struct request_say *rs)
 //handle login requests
 int loginReq(struct request_login *rl)
 {
-    int poort = getAddr_Port();
-    cout << "this should be PORT " << poort << " \n";
-    int prt = (int)poort;
-    string realAddrString = getAddr_string();
     string username = rl->req_username;
-    string smiAddr = getSemiAddr_string();
     struct sockaddr_in strctAddr = getAddrStruct();
     userToAddrStrct[username] = strctAddr;
-    addrToUser.insert(pair<pair<string,string>,string>(pair<string,string>(realAddrString,smiAddr), username));
-    userToAddr.insert(pair<string,pair<string,string> >(username, pair<string,string>(realAddrString,smiAddr)));
     map<string,vector<string> >::iterator it = chanTlkUser.find("Common");
     vector<string> usersC;
     if(it == chanTlkUser.end()) {
@@ -209,26 +163,9 @@ int loginReq(struct request_login *rl)
 //handle login requests
 int logoutReq(struct request_logout *rl)
 {
-    string realAddrString = getAddr_string();
     string username = getUserOfCurrAddr();
-    string tmpaddr;
     map<string, struct sockaddr_in>::iterator sockIt = userToAddrStrct.find(username);
     userToAddrStrct.erase(sockIt);
-    multimap<pair<string,string>, string>::iterator i;
-    for(i=addrToUser.begin(); i!=addrToUser.end(); i++) {
-        if(i->second == username) {
-            tmpaddr = i->first.first;
-            cout << "deleting  1 \n";
-            addrToUser.erase(i);
-        }
-    }
-    multimap<string, pair<string,string> >::iterator ii;
-    for(ii=userToAddr.begin(); ii!=userToAddr.end(); ii++) {
-        if(ii->first == username) {
-            cout << "deleting  2 \n";
-            userToAddr.erase(ii);
-        }
-    }
     
     // look for user in channel listen
     //look for user in channel talk
