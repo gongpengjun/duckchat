@@ -30,10 +30,11 @@ struct sockaddr recAddr;
 socklen_t fromlen = sizeof(recAddr);
 int sockfd;
 struct addrinfo *addrAr;
+multimap<string, int> addrToPort;
 multimap<pair<string,string>, string> addrToUser;
 multimap<string, pair<string,string> > userToAddr;
-map<string,string> usrTlkChan;
-map<string,struct sockaddr_in> userToAddrStrct;
+map<string,vector<string> > usrLisChan;
+map<string,vector<string> > usrTlkChan;
 map<string,vector<string> > chanTlkUser;
 vector<string> channels;
 //methods
@@ -46,7 +47,6 @@ string getUserOfCurrAddr();
 string getAddr_string();
 string getSemiAddr_string();
 int getAddr_Port();
-struct sockaddr_in getAddrStruct();
 
 //program
 int main(int argc, char **argv)
@@ -68,7 +68,6 @@ int main(int argc, char **argv)
             cout << "do I get herer??? \n";
             readRequestType(requests, bal);  
         } 
-
        //requests = NULL;
        delete[] buf;   
     }
@@ -77,15 +76,9 @@ int main(int argc, char **argv)
 //returns string of username of current request address
 string getUserOfCurrAddr()
 { 
-    struct sockaddr_in address =(sockaddr_in)recAddr;
-    string aTmp = "";     
-    map<string,struct sockaddr_in>::iterator i;
-    for(i=userToAddrStrct.begin(); i != userToAddrStrct.end(); i++) {
-        if(i->second == address) {
-            aTmp = i->first;
-        }
-
-    }
+    pair<string,string> realAddrString (getAddr_string(),getSemiAddr_string());
+    multimap<pair<string,string>, string>::iterator i = addrToUser.find(realAddrString);
+    string aTmp = i->second;
     return aTmp;
 }
 //return semi address
@@ -99,11 +92,6 @@ string getSemiAddr_string()
     string realAddrString = addrString;
     free (addrString);
     return realAddrString;
-}
-struct sockaddr_in getAddrStruct() 
-{
-    struct sockaddr_in address = (sockaddr_in)recAddr;
-    return address;
 }
 //returns string form of address
 string getAddr_string() {
@@ -157,16 +145,22 @@ int sayReq(struct request_say *rs)
     vector<string> tmpU = hit->second;
     for(int i=0; i<tmpU.size(); i++) {
         cout << "user: " << tmpU[i] << " on channel: " << channel << " in iteration on say loop:  " << i <<"\n";
-        struct sockaddr_in address;
-        map<string, struct sockaddr_in>::iterator ui = userToAddrStrct.find(tmpU[i]);
-        address = ui->second;
+        struct sockaddr* address;
+        multimap<string, pair<string,string> >::iterator ui = userToAddr.find(tmpU[i]);
+        pair<string,string> tad = ui->second;
+        string ad = tad.second;
+        char *s= (char*) malloc(sizeof(char)*BUFLEN);
+        multimap<string,int>::iterator addrToPit = addrToPort.find(tad.first);
+        cout << "portPARIS as is: " << addrToPit->second << " \n";
+        strncpy(s, ad.c_str(), strlen(ad.c_str()));
+        inet_pton(AF_INET, s, &address);
         struct text_say *msg= (struct text_say*) malloc(sizeof(struct text_say));
         msg->txt_type= htonl(TXT_SAY);
         strncpy(msg->txt_username, username.c_str(), USERNAME_MAX);
         strncpy(msg->txt_text, message.c_str(), SAY_MAX);
         strncpy(msg->txt_channel, channel.c_str(), CHANNEL_MAX);
-        int size = sizeof(struct sockaddr*);
-        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, (struct sockaddr*)&address, size);
+        int size = sizeof(struct sockaddr);
+        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, address, size);
         if (res == -1) {
             cout << "sendto very badd \n";
             //return -1;
@@ -185,10 +179,9 @@ int loginReq(struct request_login *rl)
     string realAddrString = getAddr_string();
     string username = rl->req_username;
     string smiAddr = getSemiAddr_string();
-    struct sockaddr_in strctAddr = getAddrStruct();
-    userToAddrStrct[username] = strctAddr;
     addrToUser.insert(pair<pair<string,string>,string>(pair<string,string>(realAddrString,smiAddr), username));
     userToAddr.insert(pair<string,pair<string,string> >(username, pair<string,string>(realAddrString,smiAddr)));
+    addrToPort.insert(pair<string,int>(realAddrString, prt));
     map<string,vector<string> >::iterator it = chanTlkUser.find("Common");
     vector<string> usersC;
     if(it == chanTlkUser.end()) {
@@ -199,7 +192,10 @@ int loginReq(struct request_login *rl)
     usersC = it->second;
     usersC.insert(usersC.begin(), username);
     chanTlkUser["Common"] = usersC;
-    usrTlkChan.insert(pair<string,string>(username, "Common"));    
+    vector<string> chans;
+    chans.insert(chans.begin(), "Common");
+    usrLisChan.insert(pair<string,vector<string> >(username, chans));
+    usrTlkChan.insert(pair<string,vector<string> >(username, chans));    
     return 0;
 }
 //handle login requests
@@ -208,8 +204,6 @@ int logoutReq(struct request_logout *rl)
     string realAddrString = getAddr_string();
     string username = getUserOfCurrAddr();
     string tmpaddr;
-    map<string, struct sockaddr_in>::iterator sockIt = userToAddrStrct.find(username);
-    userToAddrStrct.erase(sockIt);
     multimap<pair<string,string>, string>::iterator i;
     for(i=addrToUser.begin(); i!=addrToUser.end(); i++) {
         if(i->second == username) {
@@ -225,11 +219,18 @@ int logoutReq(struct request_logout *rl)
             userToAddr.erase(ii);
         }
     }
-    
+    multimap<string, int>::iterator imm = addrToPort.find(tmpaddr);
+    if(imm != addrToPort.end()) {
+        cout << "deleting  3 \n";
+        addrToPort.erase(imm);
+    }
     // look for user in channel listen
+    map<string, vector<string> >::iterator git = usrLisChan.find(username);
+    if(git != usrLisChan.end()) {
+        cout << "deleting  4 \n";
+        usrLisChan.erase(username);
+    }
     //look for user in channel talk
-
-    map<string,string>::iterator git;
     git = usrTlkChan.find(username);
     if(git != usrTlkChan.end()) {
         cout << "deleting  5 \n";
@@ -278,9 +279,14 @@ int joinReq(struct request_join *rj)
         usersC.insert(usersC.begin(), user);
         chanTlkUser[chan] = usersC;
     }
-    string chanTlk = usrTlkChan[user];
-    chanTlk = chan;
+    vector<string> chanList = usrLisChan[user];
+    vector<string> chanTlk = usrTlkChan[user];
+    chanList.push_back(chan);
+    chanTlk.push_back(chan);
+    usrLisChan[user] = chanList;
     usrTlkChan[user] = chanTlk;
+    chanList.clear();
+    chanTlk.clear();
     return 0;
 }
 //handle login requests
@@ -296,6 +302,8 @@ int listReq(struct request_list *rl)
     pair<string,string> tad = ui->second;
     string ad = tad.second;
     char *s= (char*) malloc(sizeof(char)*BUFLEN);
+    multimap<string,int>::iterator addrToPit = addrToPort.find(tad.first);
+    cout << "portPARIS as is: " << addrToPit->second << " \n";
     strncpy(s, ad.c_str(), strlen(ad.c_str()));
     inet_pton(AF_INET, s, &address);
     struct text_list *msg= (struct text_list*) malloc(sizeof(struct text_list) + BUFLEN);
