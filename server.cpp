@@ -77,11 +77,11 @@ int main(int argc, char **argv)
 //returns string of username of current request address
 string getUserOfCurrAddr()
 { 
-    struct sockaddr_in address = (struct sockaddr_in)recAddr;
+    struct sockaddr_in* address = (struct sockaddr_in*)&recAddr;
     string aTmp = "";     
     map<string,struct sockaddr_in>::iterator i;
     for(i=userToAddrStrct.begin(); i != userToAddrStrct.end(); i++) {
-        if(i->second == address) {
+        if(i->second == &address) {
             aTmp = i->first;
         }
 
