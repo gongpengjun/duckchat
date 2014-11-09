@@ -98,8 +98,8 @@ int checkAddrEq(struct sockaddr_in a, struct sockaddr_in b)
     string stringA = addrA;
     string stringB = addrB;
     if(stringA == stringB) {
-        int portA = a->sin_port;
-        int portB = a->sin_port;
+        int portA = a.sin_port;
+        int portB = a.sin_port;
         if(portA == portB) {
             return 0;
         }
@@ -109,8 +109,8 @@ int checkAddrEq(struct sockaddr_in a, struct sockaddr_in b)
 
 struct sockaddr_in getAddrStruct() 
 {
-    struct sockaddr_in address = (struct sockaddr_in)recAddr;
-    return address;
+    struct sockaddr_in address* = (struct sockaddr_in*)recAddr;
+    return *address;
 }
 //check if current request address is valid or exist in map
 int checkValidAddr(struct request *r) 
