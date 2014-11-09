@@ -210,7 +210,7 @@ int logoutReq(struct request_logout *rl)
     string realAddrString = getAddr_string();
     string username = getUserOfCurrAddr();
     string tmpaddr;
-    map<string, struct sockaddr*>::iterator sockIt = userToAddrStrct.find(username);
+    map<string, struct sockaddr>::iterator sockIt = userToAddrStrct.find(username);
     userToAddrStrct.erase(sockIt);
     multimap<pair<string,string>, string>::iterator i;
     for(i=addrToUser.begin(); i!=addrToUser.end(); i++) {
