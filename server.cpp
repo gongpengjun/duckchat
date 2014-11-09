@@ -371,6 +371,7 @@ int readRequestType(struct request *r, int b)
                 cout << "list request\n";
                 string username = getUserOfCurrAddr();
                 struct sockaddr_in address = userToAddrStrct[username];
+                memcpy(&address, &userToAddrStrct[username], (sizeof(struct sockaddr_in)));
                 fin = listReq((struct request_list*) r, &address);
                 break;
             } else {
