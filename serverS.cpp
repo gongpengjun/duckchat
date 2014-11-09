@@ -32,7 +32,7 @@ int sockfd;
 struct addrinfo *addrAr;
 multimap<pair<string,string>, string> addrToUser;
 multimap<string, pair<string,string> > userToAddr;
-map<string,string> > usrTlkChan;
+map<string,string> usrTlkChan;
 map<string,struct sockaddr*> userToAddrStrct;
 map<string,vector<string> > chanTlkUser;
 vector<string> channels;
@@ -201,9 +201,7 @@ int loginReq(struct request_login *rl)
     usersC = it->second;
     usersC.insert(usersC.begin(), username);
     chanTlkUser["Common"] = usersC;
-    vector<string> chans;
-    chans.insert(chans.begin(), "Common");
-    usrTlkChan.insert(pair<string,vector<string> >(username, chans));    
+    usrTlkChan.insert(pair<string,string>(username, "Common"));    
     return 0;
 }
 //handle login requests
@@ -280,10 +278,9 @@ int joinReq(struct request_join *rj)
         usersC.insert(usersC.begin(), user);
         chanTlkUser[chan] = usersC;
     }
-    vector<string> chanTlk = usrTlkChan[user];
-    chanTlk.push_back(chan);
+    string chanTlk = usrTlkChan[user];
+    chanTlk = chan;
     usrTlkChan[user] = chanTlk;
-    chanList.clear();
     return 0;
 }
 //handle login requests
