@@ -173,7 +173,7 @@ int sayReq(struct request_say *rs)
     for(int i=0; i<tmpU.size(); i++) {
         struct sockaddr_in address;
         address = tmpU[i].second;
-        struct text_say *msg = (struct text_say*) malloc(sizeof(struct text_say) + BUFLEN);
+        struct text_say *msg = (struct text_say*) malloc(sizeof(struct text_say) + (message.size()* (sizeof(struct channel_info))));
         msg->txt_type= htonl(TXT_SAY);
         char *AAA = (char*)malloc(sizeof(char)*BUFLEN);
         inet_ntop(AF_INET, &(address.sin_addr), AAA, BUFLEN);
@@ -182,7 +182,7 @@ int sayReq(struct request_say *rs)
         strncpy(msg->txt_text, message.c_str(), SAY_MAX);
         strncpy(msg->txt_channel, channel.c_str(), CHANNEL_MAX);
         int size = sizeof(struct sockaddr*);
-        int res= sendto(sockfd, msg, sizeof(struct text_say), 0, (struct sockaddr*)&address, size);
+        int res= sendto(sockfd, msg, (sizeof(struct text_say) + (message.size()* (sizeof(struct channel_info)))), 0, (struct sockaddr*)&address, size);
         if (res == -1) {
             cout << "sendto very badd \n";
             //return -1;
@@ -312,8 +312,6 @@ int leaveReq(struct request_leave *rl)
         }
     }
     usrTlkChan[username] = chanTlk;
-    
-    //free(msg);
     return 0;
 }
 //handle login requests
