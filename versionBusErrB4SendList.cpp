@@ -53,17 +53,17 @@ int main(int argc, char **argv)
     sockfd = 0;
     connectToSocket(argv[1], argv[2]);
     fd_set sockfds;
-    //struct timeval timeV;
+    struct timeval timeV;
     while(1)
     {
         //for multiple requests maybe
         // requests = (struct request*) malloc(sizeof (struct request) + BUFLEN);
-        // timeV.tv_sec = 120;
-        // timeV.tv_usec = 0;
-        // FD_ZERO(&sockfds);
-        // FD_SET(sockfd, &sockfds);
-        // int ret;
-        // ret = select(sockfd+1, &sockfds, NULL, NULL, &timeV);
+        timeV.tv_sec = 120;
+        timeV.tv_usec = 0;
+        FD_ZERO(&sockfds);
+        FD_SET(sockfd, &sockfds);
+        int ret;
+        ret = select(sockfd+1, &sockfds, NULL, NULL, &timeV);
 
         cout << "\n"; 
         char *buf = new char[BUFLEN];
@@ -288,15 +288,20 @@ int leaveReq(struct request_leave *rl)
 int listReq(struct request_list *rl)
 {
     string username = getUserOfCurrAddr();
-    struct sockaddr_in address; 
-    map<string, struct sockaddr_in>::iterator ui = userToAddrStrct.find(username);
+    //struct sockaddr_in address = userToAddrStrct[username];
+    
+    map<string, struct sockaddr_in>::iterator inter = userToAddrStrct.find(username);
+    
+    struct sockaddr_in address;
+    cout << "THREE\n";
+    address = inter->second;
+    cout << "FOUR\n";
     int numCHAN = channels.size();
-    address = ui->second;
-    struct text_list *msg = (struct text_list*)malloc((sizeof(struct text_list)+(numCHAN *sizeof(struct channel_info))));
-    struct channel_info minfo[numCHAN];
-    cout <<"right heree\n";
+
+    struct text_list *msg;
+    cout << "ONE\n";
     msg->txt_type= TXT_LIST;
-    cout <<" ORRRright heree\n";
+    cout << "ONE\n";
     msg->txt_nchannels = numCHAN;
     
     for (int i = 0; i<channels.size(); i++) {
@@ -304,7 +309,8 @@ int listReq(struct request_list *rl)
         strcpy(((msg->txt_channels)+i)->ch_channel, tstr);
     }
     //msg.txt_channels = minfo;
-    int size = sizeof(struct sockaddr);
+    cout << "TWO\n";
+    int size = sizeof(struct sockaddr_in*);
     int res= sendto(sockfd, msg,  (sizeof(struct text_list)+(numCHAN *sizeof(struct channel_info))), 0, (struct sockaddr*)&address, size);
     if (res == -1) {
         cout << "sendto very badd \n";

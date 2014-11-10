@@ -215,6 +215,7 @@ int readMessageType(struct text *r, int b) //what type of message have we reciev
     if(netHost > 3 || netHost < 0) {
        netHost = r->txt_type;
     }
+    cout << netHost << " thats nethost\n";
     //check if request address is valid
     /*if(netHost != 0) {
         if(checkValidAddr(r) == -1) {
@@ -223,6 +224,7 @@ int readMessageType(struct text *r, int b) //what type of message have we reciev
             return -1;
         }
     }*/
+    cout << netHost << " thats nethost\n";
     switch(netHost) {
     //printf("the value isss: %s \n", ntohl(r->req_type));
         case TXT_SAY:
@@ -237,10 +239,10 @@ int readMessageType(struct text *r, int b) //what type of message have we reciev
         case TXT_LIST:
             if(sizeof(struct text_list) + (((struct text_list*)r)->txt_nchannels)*sizeof(struct channel_info) == b) {
                 //cout << "list message\n";
-                fin = listMess((struct text_list*) r);
+                fin = listMess((struct text_list*) r);                
                 break;
             } else {
-                cout << "list message bad size\n";
+                cout << "Bad list message\n";
                 break;
             }
         case TXT_WHO:
