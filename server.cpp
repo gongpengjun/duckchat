@@ -156,6 +156,10 @@ int checkValidAddr()
     }
     return -1;
 }
+void errorMsg() {
+    struct text_error *msg = (struct text_error*)malloc((sizeof(struct text_error)+ SAY_MAX));
+    msg->txt_type = htonl(TXT_SAY);
+}
 //handle say requests
 int sayReq(struct request_say *rs)
 {
@@ -174,7 +178,7 @@ int sayReq(struct request_say *rs)
         struct sockaddr_in address;
         address = tmpU[i].second;
         struct text_say *msg = (struct text_say*) malloc(sizeof(struct text_say) + BUFLEN);
-        msg->txt_type= htonl(TXT_SAY);
+        msg->txt_type= TXT_SAY;
         char *AAA = (char*)malloc(sizeof(char)*BUFLEN);
         inet_ntop(AF_INET, &(address.sin_addr), AAA, BUFLEN);
         string printString = AAA;
