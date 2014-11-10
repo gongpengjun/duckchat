@@ -162,6 +162,9 @@ void errorMsg(struct sockaddr_in a) {
     string err = "error\n";
     strncpy(msg->txt_error, err.c_str(), SAY_MAX);
     int res = sendto(sockfd, msg, (sizeof(struct text_error)), 0, (struct sockaddr*)&a, (sizeof(struct sockaddr*)));
+    if(res == -1) {
+        cout << "error msg bad \n";
+    }
 }
 //handle say requests
 int sayReq(struct request_say *rs)
