@@ -215,7 +215,6 @@ int readMessageType(struct text *r, int b) //what type of message have we reciev
     if(netHost > 3 || netHost < 0) {
        netHost = r->txt_type;
     }
-    cout << netHost << " thats nethost\n";
     //check if request address is valid
     /*if(netHost != 0) {
         if(checkValidAddr(r) == -1) {
@@ -224,25 +223,22 @@ int readMessageType(struct text *r, int b) //what type of message have we reciev
             return -1;
         }
     }*/
-    cout << netHost << " thats nethost\n";
     switch(netHost) {
     //printf("the value isss: %s \n", ntohl(r->req_type));
         case TXT_SAY:
-            if(sizeof(struct text_say) == b) {
+            //if(sizeof(struct text_say) == b) {
                 //cout << "say message\n";
                 fin = sayMess((struct text_say*) r);
                 break;
-            } else {
-                cout << "say message FAILED\n";
-                break;
-            }
+           // } else {
+             //   break;
+            //}
         case TXT_LIST:
             if(sizeof(struct text_list) + (((struct text_list*)r)->txt_nchannels)*sizeof(struct channel_info) == b) {
                 //cout << "list message\n";
                 fin = listMess((struct text_list*) r);                
                 break;
             } else {
-                cout << "Bad list message\n";
                 break;
             }
         case TXT_WHO:
@@ -253,7 +249,6 @@ int readMessageType(struct text *r, int b) //what type of message have we reciev
                 fin = whoMess((struct text_who*) r);
                 break;
             } else {
-                cout << "who message bad size\n";
                 break;
             }
         case TXT_ERROR:
@@ -262,7 +257,6 @@ int readMessageType(struct text *r, int b) //what type of message have we reciev
                 fin = errorMess((struct text_error*) r);
                 break;
             } else {
-                cout << "error message bad size\n";
                 break;
             }
         default:
