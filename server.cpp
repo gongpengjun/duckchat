@@ -282,6 +282,30 @@ int joinReq(struct request_join *rj)
 //handle login requests
 int leaveReq(struct request_leave *rl)
 {
+    string username = getUserOfCurrAddr();
+    string chaNel = (string)(rl->req_channel);
+    map<string, struct sockaddr_in>::iterator ui = userToAddrStrct.find(username);
+    struct sockaddr_in address = ui->second;
+    map<string,vector<string> >::iterator vi = chanTlkUser.find(chaNel);
+    vector<string> v = vi->second;
+    for(int vecI=0; vecI<v.size(); vecI++) {
+        if(v[vecI] == username) {
+            v.erase (v.begin()+vecI);
+        }
+    }
+    chanTlkUser.erase(vi);
+    if(v.size() != 0) {
+        chanTlkUser.insert(pair<string,vector<string> >(chaNel,v));
+        return 0;
+    } else {
+        for(int i=0; i<channels.size(); i++) {
+            if(channels[i] == chaNel) {
+                channels.erase(channels.begin()+i);
+            }
+        }
+    }
+    
+    //free(msg);
     return 0;
 }
 //handle login requests
@@ -293,7 +317,6 @@ int listReq(struct request_list *rl)
     int numCHAN = channels.size();
     address = ui->second;
     struct text_list *msg = (struct text_list*)malloc((sizeof(struct text_list)+(numCHAN *sizeof(struct channel_info))));
-    struct channel_info minfo[numCHAN];
     cout <<"right heree\n";
     msg->txt_type= TXT_LIST;
     cout <<" ORRRright heree\n";
@@ -316,6 +339,33 @@ int listReq(struct request_list *rl)
 //handle login requests
 int whoReq(struct request_who *rw)
 {
+    string username = getUserOfCurrAddr();
+    struct sockaddr_in address; 
+    string chaNel = (string)(rw->req_channel);
+    map<string, struct sockaddr_in>::iterator ui = userToAddrStrct.find(username);
+    map<string,vector<string> >::iterator vi = chanTlkUser.find(chaNel);
+    int numCHAN = (vi->second).size();
+    vector<string> v = vi->second;
+    address = ui->second;
+    struct text_who *msg = (struct text_who*)malloc(sizeof(struct text_who)+(numCHAN* sizeof(struct user_info)));
+    cout <<"right heree\n";
+    msg->txt_type= TXT_WHO;
+    cout <<" ORRRright heree\n";
+    msg->txt_nusernames = numCHAN;
+    const char* str = chaNel.c_str();
+    strcpy(msg->txt_channel, str);
+    for (int i = 0; i<v.size(); i++) {
+        const char* tstr = v[i].c_str();
+        strcpy(((msg->txt_users)+i)->us_username, tstr);
+    }
+    //msg.txt_channels = minfo;
+    int size = sizeof(struct sockaddr);
+    int res= sendto(sockfd, msg,  (sizeof(struct text_who)+(numCHAN* sizeof(struct user_info))), 0, (struct sockaddr*)&address, size);
+    if (res == -1) {
+        cout << "sendto very badd \n";
+        //return -1;
+    }
+    //free(msg);
     return 0;
 }
 
