@@ -177,7 +177,7 @@ int sayReq(struct request_say *rs)
     for(int i=0; i<tmpU.size(); i++) {
         struct sockaddr_in address;
         address = tmpU[i].second;
-        struct text_say *msg = (struct text_say*) malloc(sizeof(struct text_say) + BUFLEN);
+        struct text_say *msg = (struct text_say*) malloc(sizeof(struct text_say) + SAY_MAX);
         msg->txt_type= TXT_SAY;
         char *AAA = (char*)malloc(sizeof(char)*BUFLEN);
         inet_ntop(AF_INET, &(address.sin_addr), AAA, BUFLEN);
