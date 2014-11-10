@@ -150,9 +150,9 @@ int sayReq(struct request_say *rs)
         address = tmpU[i].second;
         struct text_say *msg = (struct text_say*) malloc(sizeof(struct text_say)+sizeof(message));
         msg->txt_type= TXT_SAY;
-        char *AAA = (char*)malloc(sizeof(char)*BUFLEN);
-        inet_ntop(AF_INET, &(address.sin_addr), AAA, BUFLEN);
-        string printString = AAA;
+        // char *AAA = (char*)malloc(sizeof(char)*BUFLEN);
+        // inet_ntop(AF_INET, &(address.sin_addr), AAA, BUFLEN);
+        // string printString = AAA;
         strncpy(msg->txt_username, username.c_str(), USERNAME_MAX);
         strncpy(msg->txt_text, message.c_str(), SAY_MAX);
         strncpy(msg->txt_channel, channel.c_str(), CHANNEL_MAX);
